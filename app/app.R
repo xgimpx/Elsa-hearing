@@ -51,6 +51,9 @@ retention_summary <- load_data("retention_summary.rds")
 attrition_counts <- load_data("attrition_counts.rds")
 model_comparison <- load_data("model_comparison.csv")
 model_results <- load_data("model_results_fully_adjusted.csv")
+predicted_trajectories <- load_data("predicted_trajectories.rds")
+model_quadratic <- load_data("model_quadratic_results.csv")
+model_dummy <- load_data("model_B_results.csv")
 
 # Define color palette
 hearing_colors <- c(
@@ -158,7 +161,7 @@ ui <- page_navbar(
     layout_sidebar(
       sidebar = sidebar(
         title = "Options",
-        width = 250,
+        width = 280,
 
         selectInput(
           "outcome_var",
@@ -172,13 +175,50 @@ ui <- page_navbar(
           selected = "cf_animals"
         ),
 
-        checkboxInput("show_ci", "Show 95% CI", value = TRUE),
+        hr(),
+
+        radioButtons(
+          "trajectory_type",
+          "Display Type:",
+          choices = c(
+            "Observed Means" = "observed",
+            "Model Predictions" = "predicted"
+          ),
+          selected = "observed"
+        ),
+
+        conditionalPanel(
+          condition = "input.trajectory_type == 'observed'",
+          checkboxInput("show_ci", "Show 95% CI", value = TRUE)
+        ),
+
+        conditionalPanel(
+          condition = "input.trajectory_type == 'predicted'",
+          selectInput(
+            "model_type",
+            "Model Type:",
+            choices = c(
+              "Linear Time" = "Linear",
+              "Quadratic Time" = "Quadratic",
+              "Dummy (Wave Indicators)" = "Dummy (Wave)"
+            ),
+            selected = "Linear"
+          ),
+          tags$small(
+            class = "text-muted",
+            tags$strong("Linear:"), " time as continuous", tags$br(),
+            tags$strong("Quadratic:"), " time + time\u00B2", tags$br(),
+            tags$strong("Dummy:"), " separate wave effects"
+          )
+        ),
 
         hr(),
 
         tags$small(
           class = "text-muted",
-          "Plot shows mean scores with standard error bars.",
+          "Predictions adjusted for age (70), sex (female),",
+          " education (intermediate), wealth (Q3),",
+          " depression (median), no diabetes/CVD.",
           br(), br(),
           "Data: ELSA Waves 7-11 (2014-2023)"
         )
@@ -188,6 +228,9 @@ ui <- page_navbar(
         card_header(textOutput("trajectory_title")),
         card_body(
           plotlyOutput("trajectory_plot", height = "500px")
+        ),
+        card_footer(
+          textOutput("trajectory_caption")
         )
       )
     )
@@ -424,25 +467,90 @@ server <- function(input, output, session) {
       "cf_imm_recall_total" = "Word-List Immediate Recall",
       "cf_serial7_total" = "Serial 7s Performance"
     )
-    paste("Cognitive Trajectory:", outcome_labels[input$outcome_var])
+
+    if (input$trajectory_type == "observed") {
+      paste("Observed Means:", outcome_labels[input$outcome_var])
+    } else {
+      paste("Model Predicted:", outcome_labels[input$outcome_var],
+            paste0("(", input$model_type, " time)"))
+    }
+  })
+
+  output$trajectory_caption <- renderText({
+    if (input$trajectory_type == "observed") {
+      "Observed sample means with 95% confidence intervals"
+    } else {
+      model_desc <- switch(input$model_type,
+        "Linear" = "Linear model: cognitive score = b0 + b1*time + b2*hearing + b3*hearing*time",
+        "Quadratic" = "Quadratic model: includes time\u00B2 to capture acceleration/deceleration",
+        "Dummy (Wave)" = "Dummy model: separate estimates at each wave (no assumed functional form)"
+      )
+      paste("Predicted for reference person (age 70, female, intermediate education).", model_desc)
+    }
   })
 
   output$trajectory_plot <- renderPlotly({
-    if (is.null(trajectory_means)) {
-      return(NULL)
-    }
+    # Map outcome variable to outcome name for predictions
+    outcome_map <- c(
+      "cf_animals" = "Verbal Fluency",
+      "cf_delayed_recall" = "Delayed Recall"
+    )
 
-    plot_data <- trajectory_means %>%
-      filter(outcome == input$outcome_var)
+    if (input$trajectory_type == "observed") {
+      # OBSERVED MEANS
+      if (is.null(trajectory_means)) {
+        return(plot_ly() %>%
+                 layout(annotations = list(
+                   text = "Run script 06 to generate data", showarrow = FALSE)))
+      }
 
-    p <- ggplot(plot_data, aes(x = time, y = mean_score, color = hearing_acuity,
-                               group = hearing_acuity)) +
-      geom_line(linewidth = 1.2) +
-      geom_point(size = 3)
+      plot_data <- trajectory_means %>%
+        filter(outcome == input$outcome_var)
 
-    if (input$show_ci) {
-      p <- p + geom_ribbon(aes(ymin = ci_lower, ymax = ci_upper, fill = hearing_acuity),
-                           alpha = 0.2, color = NA)
+      p <- ggplot(plot_data, aes(x = time, y = mean_score, color = hearing_acuity,
+                                 group = hearing_acuity)) +
+        geom_line(linewidth = 1.2) +
+        geom_point(size = 3)
+
+      if (input$show_ci) {
+        p <- p + geom_ribbon(aes(ymin = ci_lower, ymax = ci_upper, fill = hearing_acuity),
+                             alpha = 0.2, color = NA)
+      }
+
+      y_label <- "Mean Score"
+
+    } else {
+      # MODEL PREDICTIONS
+      if (is.null(predicted_trajectories)) {
+        return(plot_ly() %>%
+                 layout(annotations = list(
+                   text = "Run analysis pipeline to generate predictions", showarrow = FALSE)))
+      }
+
+      # Only Verbal Fluency and Delayed Recall have predictions
+      if (!(input$outcome_var %in% c("cf_animals", "cf_delayed_recall"))) {
+        return(plot_ly() %>%
+                 layout(annotations = list(
+                   text = "Model predictions only available for Verbal Fluency and Delayed Recall",
+                   showarrow = FALSE)))
+      }
+
+      outcome_name <- outcome_map[input$outcome_var]
+
+      plot_data <- predicted_trajectories %>%
+        filter(outcome == outcome_name,
+               model_type == input$model_type)
+
+      p <- ggplot(plot_data, aes(x = time, y = predicted, color = hearing_acuity,
+                                 group = hearing_acuity)) +
+        geom_line(linewidth = 1.2)
+
+      # Add points for dummy model
+      if (input$model_type == "Dummy (Wave)") {
+        p <- p + geom_point(size = 3)
+      }
+
+      y_label <- "Predicted Score"
     }
 
     p <- p +
@@ -454,7 +562,7 @@ server <- function(input, output, session) {
       ) +
       labs(
         x = "Wave (Years from baseline)",
-        y = "Mean Score",
+        y = y_label,
         color = "Hearing",
         fill = "Hearing"
       ) +

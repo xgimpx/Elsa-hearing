@@ -102,7 +102,14 @@ analysis_df <- analytic_sample %>%
 
     # Social engagement as factor (may have missing data)
     social_engagement_cat = relevel(factor(social_engagement_cat),
-                                    ref = "None")
+                                    ref = "None"),
+
+    # Quadratic time term
+    time_sq = time^2,
+
+    # Wave as factor for dummy-coded models
+    wave_factor = factor(paste("Wave", wave),
+                         levels = c("Wave 7", "Wave 8", "Wave 9", "Wave 10", "Wave 11"))
   ) %>%
   # Drop unused factor levels to avoid contrast issues
   mutate(across(where(is.factor), droplevels))
@@ -485,6 +492,176 @@ cat(rep("=", 60), "\n")
 print(model_B_table, n = 80)
 
 write_csv(model_B_table, "output/tables/model_B_results.csv")
+
+# =============================================================================
+# MODEL C: QUADRATIC TIME
+# =============================================================================
+
+message("\n========== MODEL C: Quadratic Time ==========\n")
+
+# MODEL C adds time² to capture non-linear change over time
+# This tests whether cognitive decline ACCELERATES
+#
+# Formula: outcome ~ hearing_acuity * (time + time_sq) + covariates
+#
+# time_sq interaction tests: Do hearing groups show different CURVATURE?
+
+fit_quadratic_model <- function(outcome_var, data) {
+  formula_str <- paste0(
+    outcome_var,
+    " ~ hearing_acuity * (time + time_sq) + ",
+    "age_c + sex_factor + education_3cat + wealth_quintile + ",
+    "cesd_total + has_diabetes + has_cvd + ",
+    "(1 + time | idauniq)"
+  )
+
+  model <- lmer(
+    as.formula(formula_str),
+    data = data,
+    control = lmerControl(optimizer = "bobyqa")
+  )
+  return(model)
+}
+
+message("Fitting quadratic models...")
+model_quad_animals <- fit_quadratic_model("cf_animals", analysis_df)
+model_quad_delayed <- fit_quadratic_model("cf_delayed_recall", analysis_df)
+
+cat("\n", rep("=", 60), "\n")
+cat("Model C (Quadratic): Verbal Fluency\n")
+cat(rep("=", 60), "\n")
+print(summary(model_quad_animals))
+
+cat("\n", rep("=", 60), "\n")
+cat("Model C (Quadratic): Delayed Recall\n")
+cat(rep("=", 60), "\n")
+print(summary(model_quad_delayed))
+
+# Extract quadratic model results
+model_C_results <- bind_rows(
+  tidy(model_quad_animals, effects = "fixed") %>% mutate(outcome = "Verbal Fluency"),
+  tidy(model_quad_delayed, effects = "fixed") %>% mutate(outcome = "Delayed Recall")
+) %>%
+  mutate(
+    estimate = round(estimate, 4),
+    std.error = round(std.error, 4),
+    p.value = round(p.value, 4),
+    sig = case_when(
+      p.value < 0.001 ~ "***",
+      p.value < 0.01 ~ "**",
+      p.value < 0.05 ~ "*",
+      p.value < 0.1 ~ ".",
+      TRUE ~ ""
+    )
+  ) %>%
+  select(outcome, term, estimate, std.error, p.value, sig)
+
+write_csv(model_C_results, "output/tables/model_quadratic_results.csv")
+
+# =============================================================================
+# GENERATE MODEL-PREDICTED TRAJECTORIES FOR DASHBOARD
+# =============================================================================
+
+message("\n========== Generating Predicted Trajectories ==========\n")
+
+# Create prediction grid for all models
+# Reference person: age 70, female, intermediate education, Q3 wealth,
+#                   low depression, no diabetes, no CVD
+
+time_grid <- seq(0, 8, by = 0.5)
+
+# Prediction grid for linear/quadratic models
+pred_grid_full <- expand_grid(
+  time = time_grid,
+  hearing_acuity = levels(analysis_df$hearing_acuity)
+) %>%
+  mutate(
+    time_sq = time^2,
+    hearing_acuity = factor(hearing_acuity, levels = levels(analysis_df$hearing_acuity)),
+    age_c = 0,
+    sex_factor = factor("Female", levels = c("Male", "Female")),
+    education_3cat = factor("Intermediate (A/O level)",
+                            levels = levels(analysis_df$education_3cat)),
+    wealth_quintile = factor("Q3", levels = levels(analysis_df$wealth_quintile)),
+    cesd_total = median(analysis_df$cesd_total, na.rm = TRUE),
+    has_diabetes = 0,
+    has_cvd = 0
+  )
+
+# Generate predictions from LINEAR model (Model 3)
+pred_grid_full$linear_animals <- predict(models_animals$model3,
+                                          newdata = pred_grid_full, re.form = NA)
+pred_grid_full$linear_delayed <- predict(models_delayed$model3,
+                                          newdata = pred_grid_full, re.form = NA)
+
+# Generate predictions from QUADRATIC model
+pred_grid_full$quadratic_animals <- predict(model_quad_animals,
+                                             newdata = pred_grid_full, re.form = NA)
+pred_grid_full$quadratic_delayed <- predict(model_quad_delayed,
+                                             newdata = pred_grid_full, re.form = NA)
+
+# Prediction grid for dummy-coded model (only at actual wave times)
+pred_grid_dummy <- tibble(
+  wave_factor = factor(c("Wave 7", "Wave 8", "Wave 9", "Wave 10", "Wave 11"),
+                       levels = levels(analysis_df$wave_factor)),
+  time = c(0, 2, 4, 6, 8)
+) %>%
+  crossing(hearing_acuity = factor(levels(analysis_df$hearing_acuity),
+                                   levels = levels(analysis_df$hearing_acuity))) %>%
+  mutate(
+    age_c = 0,
+    sex_factor = factor("Female", levels = c("Male", "Female"))
+  )
+
+pred_grid_dummy$dummy_animals <- predict(model_B_animals,
+                                          newdata = pred_grid_dummy, re.form = NA)
+pred_grid_dummy$dummy_delayed <- predict(model_B_delayed,
+                                          newdata = pred_grid_dummy, re.form = NA)
+
+# Combine all predictions into a long format for dashboard
+predicted_trajectories <- pred_grid_full %>%
+  select(time, hearing_acuity,
+         linear_animals, linear_delayed,
+         quadratic_animals, quadratic_delayed) %>%
+  pivot_longer(
+    cols = c(linear_animals, linear_delayed, quadratic_animals, quadratic_delayed),
+    names_to = c("model_type", "outcome"),
+    names_sep = "_",
+    values_to = "predicted"
+  ) %>%
+  mutate(
+    outcome = case_when(
+      outcome == "animals" ~ "Verbal Fluency",
+      outcome == "delayed" ~ "Delayed Recall"
+    ),
+    model_type = case_when(
+      model_type == "linear" ~ "Linear",
+      model_type == "quadratic" ~ "Quadratic"
+    )
+  )
+
+# Add dummy model predictions
+dummy_predictions <- pred_grid_dummy %>%
+  select(time, hearing_acuity, dummy_animals, dummy_delayed) %>%
+  pivot_longer(
+    cols = c(dummy_animals, dummy_delayed),
+    names_to = "outcome",
+    values_to = "predicted"
+  ) %>%
+  mutate(
+    outcome = case_when(
+      outcome == "dummy_animals" ~ "Verbal Fluency",
+      outcome == "dummy_delayed" ~ "Delayed Recall"
+    ),
+    model_type = "Dummy (Wave)"
+  )
+
+# Combine all
+all_predictions <- bind_rows(predicted_trajectories, dummy_predictions)
+
+# Save for dashboard
+saveRDS(all_predictions, "output/predicted_trajectories.rds")
+cat("Predicted trajectories saved to: output/predicted_trajectories.rds\n")
 
 # =============================================================================
 # SENSITIVITY ANALYSIS: IPW-Weighted Model

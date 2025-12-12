@@ -160,6 +160,24 @@ file.copy("output/tables/model_results_unadjusted.csv",
           "app/data/model_results_unadjusted.csv", overwrite = TRUE)
 file.copy("output/tables/model_results_sociodemographic.csv",
           "app/data/model_results_sociodemographic.csv", overwrite = TRUE)
+file.copy("output/tables/model_quadratic_results.csv",
+          "app/data/model_quadratic_results.csv", overwrite = TRUE)
+file.copy("output/tables/model_B_results.csv",
+          "app/data/model_B_results.csv", overwrite = TRUE)
+
+# =============================================================================
+# 7. Copy predicted trajectories
+# =============================================================================
+
+message("Copying predicted trajectories...")
+
+if (file.exists("output/predicted_trajectories.rds")) {
+  file.copy("output/predicted_trajectories.rds",
+            "app/data/predicted_trajectories.rds", overwrite = TRUE)
+  cat("  - Predicted trajectories copied\n")
+} else {
+  warning("predicted_trajectories.rds not found - run 05_longitudinal_analysis.R first")
+}
 
 # =============================================================================
 # Summary
@@ -172,7 +190,10 @@ cat("  - table1_summary.rds\n")
 cat("  - trajectory_means.rds\n")
 cat("  - retention_summary.rds\n")
 cat("  - attrition_counts.rds\n")
+cat("  - predicted_trajectories.rds\n")
 cat("  - model_comparison.csv\n")
+cat("  - model_quadratic_results.csv\n")
+cat("  - model_B_results.csv\n")
 cat("  - model_results_*.csv\n")
 cat("\nThese files contain AGGREGATED data only.\n")
 cat("No individual-level ELSA data is included.\n")

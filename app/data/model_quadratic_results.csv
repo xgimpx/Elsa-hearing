@@ -1,0 +1,41 @@
+outcome,term,estimate,std.error,p.value,sig
+Verbal Fluency,(Intercept),18.3412,0.3821,0,***
+Verbal Fluency,hearing_acuityMild difficulty (3-5 tones),0.1145,0.2669,0.668,
+Verbal Fluency,hearing_acuityModerate-severe (0-2 tones),-0.445,0.3871,0.2504,
+Verbal Fluency,time,0.0879,0.0817,0.282,
+Verbal Fluency,time_sq,-0.0388,0.0103,2e-4,***
+Verbal Fluency,age_c,-0.248,0.0122,0,***
+Verbal Fluency,sex_factorFemale,0.4222,0.2161,0.0508,.
+Verbal Fluency,education_3catIntermediate (A/O level),1.9215,0.2775,0,***
+Verbal Fluency,education_3catHigher (degree/equiv),2.9639,0.277,0,***
+Verbal Fluency,wealth_quintileQ2,0.4131,0.3592,0.2502,
+Verbal Fluency,wealth_quintileQ3,1.5848,0.361,0,***
+Verbal Fluency,wealth_quintileQ4,2.0545,0.3638,0,***
+Verbal Fluency,wealth_quintileQ5 (Highest),2.4426,0.3748,0,***
+Verbal Fluency,cesd_total,-0.4412,0.0581,0,***
+Verbal Fluency,has_diabetes,-0.3269,0.704,0.6425,
+Verbal Fluency,has_cvd,-0.2559,0.4952,0.6053,
+Verbal Fluency,hearing_acuityMild difficulty (3-5 tones):time,-0.224,0.1223,0.067,.
+Verbal Fluency,hearing_acuityModerate-severe (0-2 tones):time,0.086,0.1833,0.6389,
+Verbal Fluency,hearing_acuityMild difficulty (3-5 tones):time_sq,0.0214,0.0156,0.1711,
+Verbal Fluency,hearing_acuityModerate-severe (0-2 tones):time_sq,-0.0196,0.0243,0.4215,
+Delayed Recall,(Intercept),3.4185,0.1112,0,***
+Delayed Recall,hearing_acuityMild difficulty (3-5 tones),-0.1352,0.0794,0.0886,.
+Delayed Recall,hearing_acuityModerate-severe (0-2 tones),-0.2201,0.115,0.0557,.
+Delayed Recall,time,-0.1181,0.0232,0,***
+Delayed Recall,time_sq,0.0024,0.0029,0.4115,
+Delayed Recall,age_c,-0.0875,0.0035,0,***
+Delayed Recall,sex_factorFemale,0.5521,0.0623,0,***
+Delayed Recall,education_3catIntermediate (A/O level),0.6188,0.0801,0,***
+Delayed Recall,education_3catHigher (degree/equiv),0.8948,0.08,0,***
+Delayed Recall,wealth_quintileQ2,0.3027,0.104,0.0036,**
+Delayed Recall,wealth_quintileQ3,0.5236,0.1044,0,***
+Delayed Recall,wealth_quintileQ4,0.6961,0.1051,0,***
+Delayed Recall,wealth_quintileQ5 (Highest),0.879,0.1081,0,***
+Delayed Recall,cesd_total,-0.1124,0.0168,0,***
+Delayed Recall,has_diabetes,0.0189,0.2034,0.9259,
+Delayed Recall,has_cvd,-0.1577,0.1437,0.2725,
+Delayed Recall,hearing_acuityMild difficulty (3-5 tones):time,-0.0074,0.0347,0.8322,
+Delayed Recall,hearing_acuityModerate-severe (0-2 tones):time,0.0185,0.0522,0.7225,
+Delayed Recall,hearing_acuityMild difficulty (3-5 tones):time_sq,1e-4,0.0045,0.9881,
+Delayed Recall,hearing_acuityModerate-severe (0-2 tones):time_sq,-0.0068,0.007,0.3315,

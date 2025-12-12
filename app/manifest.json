@@ -3436,7 +3436,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "07e94760f84bf2ef891e54032978597d"
+      "checksum": "20e1ab2c77cb31e38c1b291773dca45c"
     },
     "data/.gitkeep": {
       "checksum": "d41d8cd98f00b204e9800998ecf8427e"
@@ -3444,8 +3444,14 @@
     "data/attrition_counts.rds": {
       "checksum": "397c9250cda4d66dc44579bf60f2c39a"
     },
+    "data/model_B_results.csv": {
+      "checksum": "cd2b1a5891026aa2d5619d332ba34977"
+    },
     "data/model_comparison.csv": {
       "checksum": "3ca0c352295e7149ccd89fc26eeb25cc"
+    },
+    "data/model_quadratic_results.csv": {
+      "checksum": "ac8ec0312e53ede46241f98772fb9828"
     },
     "data/model_results_fully_adjusted.csv": {
       "checksum": "83801ff2a49e10806abaeb1ada4b2918"
@@ -3455,6 +3461,9 @@
     },
     "data/model_results_unadjusted.csv": {
       "checksum": "0dc3fec44a90f7e09a07b3de804ec4bf"
+    },
+    "data/predicted_trajectories.rds": {
+      "checksum": "87860a9439a98488f219b5c3cea8675e"
     },
     "data/retention_summary.rds": {
       "checksum": "67430a04ebe29f9a72c3b04edc89ba82"
