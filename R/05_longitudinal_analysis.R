@@ -526,6 +526,8 @@ fit_quadratic_model <- function(outcome_var, data) {
 message("Fitting quadratic models...")
 model_quad_animals <- fit_quadratic_model("cf_animals", analysis_df)
 model_quad_delayed <- fit_quadratic_model("cf_delayed_recall", analysis_df)
+model_quad_imm <- fit_quadratic_model("cf_imm_recall_total", analysis_df)
+model_quad_serial7 <- fit_quadratic_model("cf_serial7_total", analysis_df)
 
 cat("\n", rep("=", 60), "\n")
 cat("Model C (Quadratic): Verbal Fluency\n")
@@ -537,10 +539,22 @@ cat("Model C (Quadratic): Delayed Recall\n")
 cat(rep("=", 60), "\n")
 print(summary(model_quad_delayed))
 
+cat("\n", rep("=", 60), "\n")
+cat("Model C (Quadratic): Immediate Recall\n")
+cat(rep("=", 60), "\n")
+print(summary(model_quad_imm))
+
+cat("\n", rep("=", 60), "\n")
+cat("Model C (Quadratic): Serial 7s\n")
+cat(rep("=", 60), "\n")
+print(summary(model_quad_serial7))
+
 # Extract quadratic model results
 model_C_results <- bind_rows(
   tidy(model_quad_animals, effects = "fixed") %>% mutate(outcome = "Verbal Fluency"),
-  tidy(model_quad_delayed, effects = "fixed") %>% mutate(outcome = "Delayed Recall")
+  tidy(model_quad_delayed, effects = "fixed") %>% mutate(outcome = "Delayed Recall"),
+  tidy(model_quad_imm, effects = "fixed") %>% mutate(outcome = "Immediate Recall"),
+  tidy(model_quad_serial7, effects = "fixed") %>% mutate(outcome = "Serial 7s")
 ) %>%
   mutate(
     estimate = round(estimate, 4),
@@ -588,16 +602,24 @@ pred_grid_full <- expand_grid(
     has_cvd = 0
   )
 
-# Generate predictions from LINEAR model (Model 3)
+# Generate predictions from LINEAR model (Model 3) - all 4 outcomes
 pred_grid_full$linear_animals <- predict(models_animals$model3,
                                           newdata = pred_grid_full, re.form = NA)
 pred_grid_full$linear_delayed <- predict(models_delayed$model3,
                                           newdata = pred_grid_full, re.form = NA)
+pred_grid_full$linear_imm <- predict(models_imm$model3,
+                                      newdata = pred_grid_full, re.form = NA)
+pred_grid_full$linear_serial7 <- predict(models_serial7$model3,
+                                          newdata = pred_grid_full, re.form = NA)
 
-# Generate predictions from QUADRATIC model
+# Generate predictions from QUADRATIC model - all 4 outcomes
 pred_grid_full$quadratic_animals <- predict(model_quad_animals,
                                              newdata = pred_grid_full, re.form = NA)
 pred_grid_full$quadratic_delayed <- predict(model_quad_delayed,
+                                             newdata = pred_grid_full, re.form = NA)
+pred_grid_full$quadratic_imm <- predict(model_quad_imm,
+                                         newdata = pred_grid_full, re.form = NA)
+pred_grid_full$quadratic_serial7 <- predict(model_quad_serial7,
                                              newdata = pred_grid_full, re.form = NA)
 
 # Prediction grid for dummy-coded model (only at actual wave times)
@@ -613,18 +635,23 @@ pred_grid_dummy <- tibble(
     sex_factor = factor("Female", levels = c("Male", "Female"))
   )
 
+# Generate predictions from DUMMY model - all 4 outcomes
 pred_grid_dummy$dummy_animals <- predict(model_B_animals,
                                           newdata = pred_grid_dummy, re.form = NA)
 pred_grid_dummy$dummy_delayed <- predict(model_B_delayed,
+                                          newdata = pred_grid_dummy, re.form = NA)
+pred_grid_dummy$dummy_imm <- predict(model_B_imm,
+                                      newdata = pred_grid_dummy, re.form = NA)
+pred_grid_dummy$dummy_serial7 <- predict(model_B_serial7,
                                           newdata = pred_grid_dummy, re.form = NA)
 
 # Combine all predictions into a long format for dashboard
 predicted_trajectories <- pred_grid_full %>%
   select(time, hearing_acuity,
-         linear_animals, linear_delayed,
-         quadratic_animals, quadratic_delayed) %>%
+         linear_animals, linear_delayed, linear_imm, linear_serial7,
+         quadratic_animals, quadratic_delayed, quadratic_imm, quadratic_serial7) %>%
   pivot_longer(
-    cols = c(linear_animals, linear_delayed, quadratic_animals, quadratic_delayed),
+    cols = starts_with(c("linear_", "quadratic_")),
     names_to = c("model_type", "outcome"),
     names_sep = "_",
     values_to = "predicted"
@@ -632,7 +659,9 @@ predicted_trajectories <- pred_grid_full %>%
   mutate(
     outcome = case_when(
       outcome == "animals" ~ "Verbal Fluency",
-      outcome == "delayed" ~ "Delayed Recall"
+      outcome == "delayed" ~ "Delayed Recall",
+      outcome == "imm" ~ "Immediate Recall",
+      outcome == "serial7" ~ "Serial 7s"
     ),
     model_type = case_when(
       model_type == "linear" ~ "Linear",
@@ -642,16 +671,18 @@ predicted_trajectories <- pred_grid_full %>%
 
 # Add dummy model predictions
 dummy_predictions <- pred_grid_dummy %>%
-  select(time, hearing_acuity, dummy_animals, dummy_delayed) %>%
+  select(time, hearing_acuity, dummy_animals, dummy_delayed, dummy_imm, dummy_serial7) %>%
   pivot_longer(
-    cols = c(dummy_animals, dummy_delayed),
+    cols = starts_with("dummy_"),
     names_to = "outcome",
     values_to = "predicted"
   ) %>%
   mutate(
     outcome = case_when(
       outcome == "dummy_animals" ~ "Verbal Fluency",
-      outcome == "dummy_delayed" ~ "Delayed Recall"
+      outcome == "dummy_delayed" ~ "Delayed Recall",
+      outcome == "dummy_imm" ~ "Immediate Recall",
+      outcome == "dummy_serial7" ~ "Serial 7s"
     ),
     model_type = "Dummy (Wave)"
   )

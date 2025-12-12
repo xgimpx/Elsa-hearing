@@ -541,7 +541,9 @@ server <- function(input, output, session) {
     # Map outcome variable to outcome name for predictions
     outcome_map <- c(
       "cf_animals" = "Verbal Fluency",
-      "cf_delayed_recall" = "Delayed Recall"
+      "cf_delayed_recall" = "Delayed Recall",
+      "cf_imm_recall_total" = "Immediate Recall",
+      "cf_serial7_total" = "Serial 7s"
     )
 
     if (input$trajectory_type == "observed") {
@@ -573,14 +575,6 @@ server <- function(input, output, session) {
         return(plot_ly() %>%
                  layout(annotations = list(
                    text = "Run analysis pipeline to generate predictions", showarrow = FALSE)))
-      }
-
-      # Only Verbal Fluency and Delayed Recall have predictions
-      if (!(input$outcome_var %in% c("cf_animals", "cf_delayed_recall"))) {
-        return(plot_ly() %>%
-                 layout(annotations = list(
-                   text = "Model predictions only available for Verbal Fluency and Delayed Recall",
-                   showarrow = FALSE)))
       }
 
       outcome_name <- outcome_map[input$outcome_var]
