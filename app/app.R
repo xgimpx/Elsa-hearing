@@ -244,7 +244,7 @@ ui <- page_navbar(
     layout_sidebar(
       sidebar = sidebar(
         title = "Model Selection",
-        width = 250,
+        width = 280,
 
         selectInput(
           "model_outcome",
@@ -260,12 +260,52 @@ ui <- page_navbar(
 
         hr(),
 
-        p(strong("Model Hierarchy:")),
-        tags$small(
-          tags$div(style = "color: #666;",
-            "M1: Age + Sex", tags$br(),
-            "M2: + Education + Wealth", tags$br(),
-            "M3: + Depression + Health + Social"
+        radioButtons(
+          "model_specification",
+          "Model Specification:",
+          choices = c(
+            "Linear Time (Hierarchical)" = "linear",
+            "Quadratic Time" = "quadratic",
+            "Dummy Time (Wave Indicators)" = "dummy"
+          ),
+          selected = "linear"
+        ),
+
+        hr(),
+
+        conditionalPanel(
+          condition = "input.model_specification == 'linear'",
+          p(strong("Hierarchical Adjustment:")),
+          tags$small(
+            tags$div(style = "color: #666;",
+              "M1: Age + Sex", tags$br(),
+              "M2: + Education + Wealth", tags$br(),
+              "M3: + Depression + Diabetes + CVD"
+            )
+          )
+        ),
+
+        conditionalPanel(
+          condition = "input.model_specification == 'quadratic'",
+          p(strong("Quadratic Model:")),
+          tags$small(
+            tags$div(style = "color: #666;",
+              "Includes time + time\u00B2", tags$br(),
+              "Tests acceleration/deceleration", tags$br(),
+              "Fully adjusted (M3 covariates)"
+            )
+          )
+        ),
+
+        conditionalPanel(
+          condition = "input.model_specification == 'dummy'",
+          p(strong("Dummy (Wave) Model:")),
+          tags$small(
+            tags$div(style = "color: #666;",
+              "Separate effect at each wave", tags$br(),
+              "No assumed functional form", tags$br(),
+              "Adjusted for age + sex"
+            )
           )
         )
       ),
@@ -274,14 +314,14 @@ ui <- page_navbar(
         col_widths = c(6, 6),
 
         card(
-          card_header("Hearing Effects Across Models"),
+          card_header(textOutput("model_plot_title")),
           card_body(
             plotlyOutput("model_comparison_plot", height = "400px")
           )
         ),
 
         card(
-          card_header("Model Coefficients (Fully Adjusted)"),
+          card_header(textOutput("model_table_title")),
           card_body(
             DTOutput("model_coef_table")
           )
@@ -573,56 +613,169 @@ server <- function(input, output, session) {
       layout(legend = list(orientation = "h", y = -0.15))
   })
 
+  # --- Model Plot Title ---
+  output$model_plot_title <- renderText({
+    switch(input$model_specification,
+      "linear" = "Hearing Effects Across Hierarchical Models",
+      "quadratic" = "Quadratic Model: Hearing Effects",
+      "dummy" = "Wave-Specific Hearing Effects"
+    )
+  })
+
+  # --- Model Table Title ---
+  output$model_table_title <- renderText({
+    switch(input$model_specification,
+      "linear" = "Fully Adjusted Linear Model Coefficients",
+      "quadratic" = "Quadratic Model Coefficients",
+      "dummy" = "Dummy (Wave) Model Coefficients"
+    )
+  })
+
   # --- Model Comparison Plot ---
   output$model_comparison_plot <- renderPlotly({
-    if (is.null(model_comparison)) {
-      return(plot_ly() %>%
-               layout(annotations = list(
-                 text = "Run analysis pipeline to generate results",
-                 showarrow = FALSE, font = list(size = 16))))
-    }
 
-    plot_data <- model_comparison %>%
-      filter(outcome == input$model_outcome) %>%
-      filter(grepl("hearing_acuity", term)) %>%
-      mutate(
-        estimate = as.numeric(str_extract(estimate_ci, "^-?[0-9.]+")),
-        ci_lower = as.numeric(str_extract(estimate_ci, "(?<=\\[)-?[0-9.]+")),
-        ci_upper = as.numeric(str_extract(estimate_ci, "(?<=, )-?[0-9.]+(?=\\])")),
-        term_clean = case_when(
-          grepl("Mild.*:time", term) ~ "Mild x Time",
-          grepl("Moderate.*:time", term) ~ "Mod-Sev x Time",
-          grepl("Mild", term) ~ "Mild (baseline)",
-          grepl("Moderate", term) ~ "Mod-Sev (baseline)",
-          TRUE ~ term
-        ),
-        model_short = case_when(
-          grepl("Model 1", model) ~ "M1",
-          grepl("Model 2", model) ~ "M2",
-          grepl("Model 3", model) ~ "M3"
+    if (input$model_specification == "linear") {
+      # LINEAR HIERARCHICAL MODELS
+      if (is.null(model_comparison)) {
+        return(plot_ly() %>%
+                 layout(annotations = list(
+                   text = "Run analysis pipeline to generate results",
+                   showarrow = FALSE, font = list(size = 16))))
+      }
+
+      plot_data <- model_comparison %>%
+        filter(outcome == input$model_outcome) %>%
+        filter(grepl("hearing_acuity", term)) %>%
+        mutate(
+          estimate = as.numeric(str_extract(estimate_ci, "^-?[0-9.]+")),
+          ci_lower = as.numeric(str_extract(estimate_ci, "(?<=\\[)-?[0-9.]+")),
+          ci_upper = as.numeric(str_extract(estimate_ci, "(?<=, )-?[0-9.]+(?=\\])")),
+          term_clean = case_when(
+            grepl("Mild.*:time", term) ~ "Mild x Time",
+            grepl("Moderate.*:time", term) ~ "Mod-Sev x Time",
+            grepl("Mild", term) ~ "Mild (baseline)",
+            grepl("Moderate", term) ~ "Mod-Sev (baseline)",
+            TRUE ~ term
+          ),
+          model_short = case_when(
+            grepl("Model 1", model) ~ "M1",
+            grepl("Model 2", model) ~ "M2",
+            grepl("Model 3", model) ~ "M3"
+          )
         )
-      )
 
-    p <- ggplot(plot_data, aes(x = model_short, y = estimate, color = term_clean)) +
-      geom_point(position = position_dodge(0.5), size = 3) +
-      geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper),
-                    position = position_dodge(0.5), width = 0.2) +
-      geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
-      labs(x = "Model", y = "Coefficient (95% CI)", color = "Effect") +
-      theme_minimal() +
-      theme(legend.position = "right")
+      p <- ggplot(plot_data, aes(x = model_short, y = estimate, color = term_clean)) +
+        geom_point(position = position_dodge(0.5), size = 3) +
+        geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper),
+                      position = position_dodge(0.5), width = 0.2) +
+        geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+        labs(x = "Model", y = "Coefficient (95% CI)", color = "Effect") +
+        theme_minimal() +
+        theme(legend.position = "right")
+
+    } else if (input$model_specification == "quadratic") {
+      # QUADRATIC MODEL
+      if (is.null(model_quadratic)) {
+        return(plot_ly() %>%
+                 layout(annotations = list(
+                   text = "Quadratic model results not available",
+                   showarrow = FALSE)))
+      }
+
+      plot_data <- model_quadratic %>%
+        filter(outcome == input$model_outcome) %>%
+        filter(grepl("hearing_acuity|time", term)) %>%
+        mutate(
+          term_clean = case_when(
+            term == "time" ~ "Time (linear)",
+            term == "time_sq" ~ "Time\u00B2 (quadratic)",
+            grepl("Mild.*:time_sq", term) ~ "Mild x Time\u00B2",
+            grepl("Moderate.*:time_sq", term) ~ "Mod-Sev x Time\u00B2",
+            grepl("Mild.*:time", term) ~ "Mild x Time",
+            grepl("Moderate.*:time", term) ~ "Mod-Sev x Time",
+            grepl("Mild", term) ~ "Mild (baseline)",
+            grepl("Moderate", term) ~ "Mod-Sev (baseline)",
+            TRUE ~ term
+          )
+        ) %>%
+        filter(term_clean != term)  # Only keep cleaned terms
+
+      p <- ggplot(plot_data, aes(x = term_clean, y = estimate,
+                                  fill = ifelse(p.value < 0.05, "Significant", "Not significant"))) +
+        geom_col() +
+        geom_errorbar(aes(ymin = estimate - 1.96*std.error,
+                          ymax = estimate + 1.96*std.error), width = 0.2) +
+        geom_hline(yintercept = 0, linetype = "dashed") +
+        scale_fill_manual(values = c("Significant" = "#2E86AB", "Not significant" = "gray70")) +
+        labs(x = "", y = "Coefficient", fill = "") +
+        theme_minimal() +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+    } else {
+      # DUMMY (WAVE) MODEL
+      if (is.null(model_dummy)) {
+        return(plot_ly() %>%
+                 layout(annotations = list(
+                   text = "Dummy model results not available",
+                   showarrow = FALSE)))
+      }
+
+      plot_data <- model_dummy %>%
+        filter(outcome == input$model_outcome) %>%
+        filter(grepl("hearing_acuity.*wave_factor", term)) %>%
+        mutate(
+          wave = str_extract(term, "Wave \\d+"),
+          hearing = case_when(
+            grepl("Mild", term) ~ "Mild",
+            grepl("Moderate", term) ~ "Mod-Severe"
+          )
+        ) %>%
+        filter(!is.na(wave), !is.na(hearing))
+
+      if (nrow(plot_data) == 0) {
+        return(plot_ly() %>%
+                 layout(annotations = list(
+                   text = "No wave interaction data for this outcome",
+                   showarrow = FALSE)))
+      }
+
+      p <- ggplot(plot_data, aes(x = wave, y = estimate, color = hearing, group = hearing)) +
+        geom_point(size = 3) +
+        geom_line() +
+        geom_errorbar(aes(ymin = estimate - 1.96*std.error,
+                          ymax = estimate + 1.96*std.error), width = 0.2) +
+        geom_hline(yintercept = 0, linetype = "dashed") +
+        labs(x = "Wave", y = "Differential Effect vs Good Hearing", color = "Hearing Group") +
+        theme_minimal()
+    }
 
     ggplotly(p)
   })
 
   # --- Model Coefficients Table ---
   output$model_coef_table <- renderDT({
-    if (is.null(model_results)) {
-      return(NULL)
-    }
+    # Select data source based on model specification
+    table_data <- switch(input$model_specification,
+      "linear" = {
+        if (is.null(model_results)) return(NULL)
+        model_results %>%
+          filter(outcome == input$model_outcome)
+      },
+      "quadratic" = {
+        if (is.null(model_quadratic)) return(NULL)
+        model_quadratic %>%
+          filter(outcome == input$model_outcome)
+      },
+      "dummy" = {
+        if (is.null(model_dummy)) return(NULL)
+        model_dummy %>%
+          filter(outcome == input$model_outcome)
+      }
+    )
 
-    table_data <- model_results %>%
-      filter(outcome == input$model_outcome) %>%
+    if (is.null(table_data)) return(NULL)
+
+    table_data <- table_data %>%
       select(term, estimate, std.error, p.value, sig) %>%
       mutate(
         estimate = round(estimate, 3),
@@ -639,53 +792,187 @@ server <- function(input, output, session) {
 
   # --- Model Interpretation ---
   output$model_interpretation <- renderUI({
-    if (is.null(model_comparison)) {
-      return(p("Run the analysis pipeline to see interpretations."))
-    }
 
-    mild_baseline <- model_comparison %>%
-      filter(outcome == input$model_outcome,
-             grepl("Model 3", model),
-             grepl("Mild.*difficulty", term),
-             !grepl("time", term))
+    if (input$model_specification == "linear") {
+      # LINEAR HIERARCHICAL INTERPRETATION
+      if (is.null(model_comparison)) {
+        return(p("Run the analysis pipeline to see interpretations."))
+      }
 
-    mild_slope <- model_comparison %>%
-      filter(outcome == input$model_outcome,
-             grepl("Model 3", model),
-             grepl("Mild.*:time", term))
+      mild_baseline <- model_comparison %>%
+        filter(outcome == input$model_outcome,
+               grepl("Model 3", model),
+               grepl("Mild.*difficulty", term),
+               !grepl("time", term))
 
-    tagList(
-      h5(icon("lightbulb"), " Key Findings for ", input$model_outcome),
+      mild_slope <- model_comparison %>%
+        filter(outcome == input$model_outcome,
+               grepl("Model 3", model),
+               grepl("Mild.*:time", term))
 
-      if (nrow(mild_baseline) > 0) {
-        p(
-          strong("Baseline difference (Mild vs Good): "),
-          mild_baseline$estimate_ci[1],
-          if (mild_baseline$p.value[1] < 0.05)
-            tags$span(class = "badge bg-success", "Significant")
-          else
-            tags$span(class = "badge bg-secondary", "Not significant")
-        )
-      },
+      tagList(
+        h5(icon("lightbulb"), " Key Findings for ", input$model_outcome, " (Linear Model)"),
 
-      if (nrow(mild_slope) > 0) {
-        p(
-          strong("Rate of change (Mild vs Good): "),
-          mild_slope$estimate_ci[1], " points/year",
-          if (mild_slope$p.value[1] < 0.05)
-            tags$span(class = "badge bg-warning", "Faster decline")
-          else
-            tags$span(class = "badge bg-secondary", "Similar trajectory")
-        )
-      },
+        if (nrow(mild_baseline) > 0) {
+          p(
+            strong("Baseline difference (Mild vs Good): "),
+            mild_baseline$estimate_ci[1],
+            if (mild_baseline$p.value[1] < 0.05)
+              tags$span(class = "badge bg-success", "Significant")
+            else
+              tags$span(class = "badge bg-secondary", "Not significant")
+          )
+        },
 
-      hr(),
+        if (nrow(mild_slope) > 0) {
+          p(
+            strong("Rate of change (Mild vs Good): "),
+            mild_slope$estimate_ci[1], " points/year",
+            if (mild_slope$p.value[1] < 0.05)
+              tags$span(class = "badge bg-warning", "Faster decline")
+            else
+              tags$span(class = "badge bg-secondary", "Similar trajectory")
+          )
+        },
 
-      tags$small(
-        class = "text-muted",
-        "Note: Negative coefficients indicate lower scores or faster decline for the hearing-impaired group."
+        hr(),
+        tags$small(class = "text-muted",
+          "Note: Negative coefficients indicate lower scores or faster decline for the hearing-impaired group.")
       )
-    )
+
+    } else if (input$model_specification == "quadratic") {
+      # QUADRATIC MODEL INTERPRETATION
+      if (is.null(model_quadratic)) {
+        return(p("Run the analysis pipeline to see quadratic model results."))
+      }
+
+      quad_data <- model_quadratic %>%
+        filter(outcome == input$model_outcome)
+
+      time_linear <- quad_data %>% filter(term == "time")
+      time_sq <- quad_data %>% filter(term == "time_sq")
+      mild_time <- quad_data %>% filter(grepl("Mild.*:time$", term))
+      mild_time_sq <- quad_data %>% filter(grepl("Mild.*:time_sq", term))
+
+      tagList(
+        h5(icon("lightbulb"), " Key Findings for ", input$model_outcome, " (Quadratic Model)"),
+
+        h6("Overall Time Effects (Good Hearing Reference)"),
+        if (nrow(time_linear) > 0) {
+          p(
+            strong("Linear time: "),
+            round(time_linear$estimate[1], 3), " (SE=", round(time_linear$std.error[1], 3), ")",
+            if (time_linear$p.value[1] < 0.05)
+              tags$span(class = "badge bg-primary", "Significant")
+            else
+              tags$span(class = "badge bg-secondary", "NS")
+          )
+        },
+        if (nrow(time_sq) > 0) {
+          p(
+            strong("Quadratic time: "),
+            round(time_sq$estimate[1], 3), " (SE=", round(time_sq$std.error[1], 3), ")",
+            if (time_sq$p.value[1] < 0.05) {
+              if (time_sq$estimate[1] > 0)
+                tags$span(class = "badge bg-success", "Deceleration")
+              else
+                tags$span(class = "badge bg-danger", "Acceleration")
+            } else {
+              tags$span(class = "badge bg-secondary", "NS")
+            }
+          )
+        },
+
+        hr(),
+        h6("Hearing Group Differences"),
+        if (nrow(mild_time) > 0) {
+          p(
+            strong("Mild hearing x Time: "),
+            round(mild_time$estimate[1], 3),
+            if (mild_time$p.value[1] < 0.05)
+              tags$span(class = "badge bg-warning", "Different slope")
+            else
+              tags$span(class = "badge bg-secondary", "Similar slope")
+          )
+        },
+        if (nrow(mild_time_sq) > 0) {
+          p(
+            strong("Mild hearing x Time\u00B2: "),
+            round(mild_time_sq$estimate[1], 3),
+            if (mild_time_sq$p.value[1] < 0.05)
+              tags$span(class = "badge bg-warning", "Different curvature")
+            else
+              tags$span(class = "badge bg-secondary", "Similar curvature")
+          )
+        },
+
+        hr(),
+        tags$small(class = "text-muted",
+          "Positive time\u00B2 = decline slows over time; Negative time\u00B2 = decline accelerates.")
+      )
+
+    } else {
+      # DUMMY (WAVE) MODEL INTERPRETATION
+      if (is.null(model_dummy)) {
+        return(p("Run the analysis pipeline to see dummy model results."))
+      }
+
+      dummy_data <- model_dummy %>%
+        filter(outcome == input$model_outcome)
+
+      # Get hearing main effects
+      mild_main <- dummy_data %>% filter(grepl("Mild", term), !grepl("wave_factor", term))
+      mod_main <- dummy_data %>% filter(grepl("Moderate", term), !grepl("wave_factor", term))
+
+      # Get interaction effects
+      interactions <- dummy_data %>%
+        filter(grepl("hearing_acuity.*wave_factor", term)) %>%
+        mutate(
+          wave = str_extract(term, "Wave \\d+"),
+          hearing = ifelse(grepl("Mild", term), "Mild", "Mod-Severe"),
+          sig_star = ifelse(p.value < 0.05, "*", "")
+        )
+
+      tagList(
+        h5(icon("lightbulb"), " Key Findings for ", input$model_outcome, " (Wave Dummy Model)"),
+
+        h6("Baseline Differences (Wave 7)"),
+        if (nrow(mild_main) > 0) {
+          p(
+            strong("Mild vs Good: "),
+            round(mild_main$estimate[1], 3),
+            if (mild_main$p.value[1] < 0.05)
+              tags$span(class = "badge bg-warning", "Significant")
+            else
+              tags$span(class = "badge bg-secondary", "NS")
+          )
+        },
+        if (nrow(mod_main) > 0) {
+          p(
+            strong("Mod-Severe vs Good: "),
+            round(mod_main$estimate[1], 3),
+            if (mod_main$p.value[1] < 0.05)
+              tags$span(class = "badge bg-danger", "Significant")
+            else
+              tags$span(class = "badge bg-secondary", "NS")
+          )
+        },
+
+        hr(),
+        h6("Wave-Specific Interactions"),
+        if (nrow(interactions) > 0) {
+          n_sig <- sum(interactions$p.value < 0.05)
+          p(paste0(n_sig, " of ", nrow(interactions),
+                   " wave-by-hearing interactions are significant (p<0.05)."))
+        } else {
+          p("No wave-by-hearing interactions found.")
+        },
+
+        hr(),
+        tags$small(class = "text-muted",
+          "Dummy models estimate separate effects at each wave, making no assumptions about the shape of change over time.")
+      )
+    }
   })
 
   # --- Retention Plot ---
