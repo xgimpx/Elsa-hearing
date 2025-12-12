@@ -409,14 +409,15 @@ wave7_comorbidities <- elsa_clean$wave7 %>%
                            "hehelf"))) %>%
   mutate(
     # Recode each condition: 1 = has condition, 0 = does not
-    has_hypertension = ifelse(hediabp == 1, 1, ifelse(hediabp == 2, 0, NA)),
-    has_angina = ifelse(hediaan == 1, 1, ifelse(hediaan == 2, 0, NA)),
-    has_heart_attack = ifelse(hediami == 1, 1, ifelse(hediami == 2, 0, NA)),
-    has_heart_failure = ifelse(hediahf == 1, 1, ifelse(hediahf == 2, 0, NA)),
-    has_arrhythmia = ifelse(hediaar == 1, 1, ifelse(hediaar == 2, 0, NA)),
-    has_diabetes = ifelse(hediadi == 1, 1, ifelse(hediadi == 2, 0, NA)),
-    has_stroke = ifelse(hediast == 1, 1, ifelse(hediast == 2, 0, NA)),
-    has_high_cholesterol = ifelse(hediach == 1, 1, ifelse(hediach == 2, 0, NA)),
+    # ELSA coding: 0 = No, 1 = Yes, negative values = missing
+    has_hypertension = ifelse(hediabp == 1, 1, ifelse(hediabp == 0, 0, NA)),
+    has_angina = ifelse(hediaan == 1, 1, ifelse(hediaan == 0, 0, NA)),
+    has_heart_attack = ifelse(hediami == 1, 1, ifelse(hediami == 0, 0, NA)),
+    has_heart_failure = ifelse(hediahf == 1, 1, ifelse(hediahf == 0, 0, NA)),
+    has_arrhythmia = ifelse(hediaar == 1, 1, ifelse(hediaar == 0, 0, NA)),
+    has_diabetes = ifelse(hediadi == 1, 1, ifelse(hediadi == 0, 0, NA)),
+    has_stroke = ifelse(hediast == 1, 1, ifelse(hediast == 0, 0, NA)),
+    has_high_cholesterol = ifelse(hediach == 1, 1, ifelse(hediach == 0, 0, NA)),
 
     # Composite cardiovascular disease indicator
     # ANY of: angina, heart attack, heart failure, stroke

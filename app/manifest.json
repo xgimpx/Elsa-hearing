@@ -3445,10 +3445,10 @@
       "checksum": "397c9250cda4d66dc44579bf60f2c39a"
     },
     "data/model_comparison.csv": {
-      "checksum": "59473115065c36f566d6ffad207bb4f4"
+      "checksum": "3ca0c352295e7149ccd89fc26eeb25cc"
     },
     "data/model_results_fully_adjusted.csv": {
-      "checksum": "26a168063b298e3a3a707c39c833f2aa"
+      "checksum": "a52ad6aec6ef022e3bc0447bdb09d7a8"
     },
     "data/model_results_sociodemographic.csv": {
       "checksum": "ec989cb423e8c99efd84acf5639fb263"
@@ -3463,7 +3463,7 @@
       "checksum": "25cb3ccf23651023181d839747e3a196"
     },
     "data/table1_summary.rds": {
-      "checksum": "6915884cecb01b46b7e0c83734ea684f"
+      "checksum": "9e09624a6eb6db143d3673827d6ad2ef"
     },
     "data/trajectory_means.rds": {
       "checksum": "990d33961568b72173b9cbeced1f3912"
