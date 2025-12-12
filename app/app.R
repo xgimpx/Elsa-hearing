@@ -269,15 +269,15 @@ ui <- page_navbar(
       col_widths = c(4, 4, 4),
       card(
         card_header("Linear Hierarchical (M1 \u2192 M2 \u2192 M3)"),
-        card_body(class = "p-2", DTOutput("model_vf_linear", height = "250px"))
+        card_body(class = "p-2", DTOutput("model_vf_linear"))
       ),
       card(
         card_header("Quadratic Time"),
-        card_body(class = "p-2", DTOutput("model_vf_quad", height = "250px"))
+        card_body(class = "p-2", DTOutput("model_vf_quad"))
       ),
       card(
         card_header("Dummy (Wave)"),
-        card_body(class = "p-2", DTOutput("model_vf_dummy", height = "250px"))
+        card_body(class = "p-2", DTOutput("model_vf_dummy"))
       )
     ),
 
@@ -287,15 +287,15 @@ ui <- page_navbar(
       col_widths = c(4, 4, 4),
       card(
         card_header("Linear Hierarchical (M1 \u2192 M2 \u2192 M3)"),
-        card_body(class = "p-2", DTOutput("model_dr_linear", height = "250px"))
+        card_body(class = "p-2", DTOutput("model_dr_linear"))
       ),
       card(
         card_header("Quadratic Time"),
-        card_body(class = "p-2", DTOutput("model_dr_quad", height = "250px"))
+        card_body(class = "p-2", DTOutput("model_dr_quad"))
       ),
       card(
         card_header("Dummy (Wave)"),
-        card_body(class = "p-2", DTOutput("model_dr_dummy", height = "250px"))
+        card_body(class = "p-2", DTOutput("model_dr_dummy"))
       )
     ),
 
@@ -305,15 +305,15 @@ ui <- page_navbar(
       col_widths = c(4, 4, 4),
       card(
         card_header("Linear Hierarchical (M1 \u2192 M2 \u2192 M3)"),
-        card_body(class = "p-2", DTOutput("model_ir_linear", height = "250px"))
+        card_body(class = "p-2", DTOutput("model_ir_linear"))
       ),
       card(
         card_header("Quadratic Time"),
-        card_body(class = "p-2", DTOutput("model_ir_quad", height = "250px"))
+        card_body(class = "p-2", DTOutput("model_ir_quad"))
       ),
       card(
         card_header("Dummy (Wave)"),
-        card_body(class = "p-2", DTOutput("model_ir_dummy", height = "250px"))
+        card_body(class = "p-2", DTOutput("model_ir_dummy"))
       )
     ),
 
@@ -323,15 +323,15 @@ ui <- page_navbar(
       col_widths = c(4, 4, 4),
       card(
         card_header("Linear Hierarchical (M1 \u2192 M2 \u2192 M3)"),
-        card_body(class = "p-2", DTOutput("model_s7_linear", height = "250px"))
+        card_body(class = "p-2", DTOutput("model_s7_linear"))
       ),
       card(
         card_header("Quadratic Time"),
-        card_body(class = "p-2", DTOutput("model_s7_quad", height = "250px"))
+        card_body(class = "p-2", DTOutput("model_s7_quad"))
       ),
       card(
         card_header("Dummy (Wave)"),
-        card_body(class = "p-2", DTOutput("model_s7_dummy", height = "250px"))
+        card_body(class = "p-2", DTOutput("model_s7_dummy"))
       )
     ),
 
@@ -704,14 +704,13 @@ server <- function(input, output, session) {
       select(Term, Coef, SE, Sig)
   }
 
-  # DT options for compact tables
+  # DT options for compact tables (no scroll, show all rows)
   dt_options <- list(
-    pageLength = 15,
+    pageLength = 20,
     dom = 't',
-    scrollY = "220px",
-    scrollCollapse = TRUE,
     ordering = FALSE,
-    autoWidth = FALSE
+    autoWidth = TRUE,
+    paging = FALSE
   )
 
   # --- Verbal Fluency tables ---
