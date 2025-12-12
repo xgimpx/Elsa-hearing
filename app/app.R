@@ -324,6 +324,14 @@ ui <- page_navbar(
           card_header(textOutput("model_table_title")),
           card_body(
             DTOutput("model_coef_table")
+          ),
+          card_footer(
+            class = "text-muted small",
+            icon("info-circle"), " ",
+            "Categorical variables (e.g., hearing, education, wealth) show multiple coefficients - ",
+            "one for each level compared to the reference category. ",
+            "For example, education has 3 levels (Low, Intermediate, Higher), ",
+            "so you see 2 coefficients comparing Intermediate vs Low and Higher vs Low."
           )
         )
       ),
