@@ -660,13 +660,25 @@ server <- function(input, output, session) {
 
     model_comparison %>%
       filter(outcome == outcome_name) %>%
-      filter(grepl("hearing_acuity", term)) %>%
       mutate(
         term_clean = case_when(
+          term == "(Intercept)" ~ "Intercept",
+          term == "time" ~ "Time",
           grepl("Mild.*:time", term) ~ "Mild x Time",
           grepl("Moderate.*:time", term) ~ "Mod-Sev x Time",
-          grepl("Mild", term) ~ "Mild (baseline)",
-          grepl("Moderate", term) ~ "Mod-Sev (baseline)",
+          grepl("Mild", term) ~ "Mild",
+          grepl("Moderate", term) ~ "Mod-Severe",
+          term == "age_c" ~ "Age (centered)",
+          term == "sex_factorFemale" ~ "Female",
+          grepl("education.*Intermediate", term) ~ "Education: Intermediate",
+          grepl("education.*Higher", term) ~ "Education: Higher",
+          grepl("wealth.*Q2", term) ~ "Wealth: Q2",
+          grepl("wealth.*Q3", term) ~ "Wealth: Q3",
+          grepl("wealth.*Q4", term) ~ "Wealth: Q4",
+          grepl("wealth.*Q5", term) ~ "Wealth: Q5",
+          term == "cesd_total" ~ "Depression (CES-D)",
+          term == "has_diabetes" ~ "Diabetes",
+          term == "has_cvd" ~ "CVD",
           TRUE ~ term
         ),
         model_short = case_when(
@@ -687,24 +699,34 @@ server <- function(input, output, session) {
 
     model_quadratic %>%
       filter(outcome == outcome_name) %>%
-      filter(grepl("hearing_acuity|^time", term)) %>%
       mutate(
         Term = case_when(
+          term == "(Intercept)" ~ "Intercept",
           term == "time" ~ "Time",
           term == "time_sq" ~ "Time\u00B2",
           grepl("Mild.*:time_sq", term) ~ "Mild x Time\u00B2",
           grepl("Moderate.*:time_sq", term) ~ "Mod-Sev x Time\u00B2",
           grepl("Mild.*:time$", term) ~ "Mild x Time",
           grepl("Moderate.*:time$", term) ~ "Mod-Sev x Time",
-          grepl("Mild", term) ~ "Mild (baseline)",
-          grepl("Moderate", term) ~ "Mod-Sev (baseline)",
+          grepl("Mild", term) ~ "Mild",
+          grepl("Moderate", term) ~ "Mod-Severe",
+          term == "age_c" ~ "Age (centered)",
+          term == "sex_factorFemale" ~ "Female",
+          grepl("education.*Intermediate", term) ~ "Education: Intermediate",
+          grepl("education.*Higher", term) ~ "Education: Higher",
+          grepl("wealth.*Q2", term) ~ "Wealth: Q2",
+          grepl("wealth.*Q3", term) ~ "Wealth: Q3",
+          grepl("wealth.*Q4", term) ~ "Wealth: Q4",
+          grepl("wealth.*Q5", term) ~ "Wealth: Q5",
+          term == "cesd_total" ~ "Depression (CES-D)",
+          term == "has_diabetes" ~ "Diabetes",
+          term == "has_cvd" ~ "CVD",
           TRUE ~ term
         ),
         Coef = round(estimate, 3),
         SE = round(std.error, 3),
         Sig = sig
       ) %>%
-      filter(Term != term) %>%
       select(Term, Coef, SE, Sig)
   }
 
@@ -714,9 +736,13 @@ server <- function(input, output, session) {
 
     model_dummy %>%
       filter(outcome == outcome_name) %>%
-      filter(grepl("hearing_acuity", term)) %>%
       mutate(
         Term = case_when(
+          term == "(Intercept)" ~ "Intercept",
+          grepl("wave_factorWave 8$", term) ~ "Wave 8",
+          grepl("wave_factorWave 9$", term) ~ "Wave 9",
+          grepl("wave_factorWave 10$", term) ~ "Wave 10",
+          grepl("wave_factorWave 11$", term) ~ "Wave 11",
           grepl("Mild.*:wave_factorWave 8", term) ~ "Mild x W8",
           grepl("Mild.*:wave_factorWave 9", term) ~ "Mild x W9",
           grepl("Mild.*:wave_factorWave 10", term) ~ "Mild x W10",
@@ -725,15 +751,16 @@ server <- function(input, output, session) {
           grepl("Moderate.*:wave_factorWave 9", term) ~ "Mod-Sev x W9",
           grepl("Moderate.*:wave_factorWave 10", term) ~ "Mod-Sev x W10",
           grepl("Moderate.*:wave_factorWave 11", term) ~ "Mod-Sev x W11",
-          grepl("Mild", term) ~ "Mild (baseline)",
-          grepl("Moderate", term) ~ "Mod-Sev (baseline)",
+          grepl("Mild", term) ~ "Mild",
+          grepl("Moderate", term) ~ "Mod-Severe",
+          term == "age_c" ~ "Age (centered)",
+          term == "sex_factorFemale" ~ "Female",
           TRUE ~ term
         ),
         Coef = round(estimate, 3),
         SE = round(std.error, 3),
         Sig = sig
       ) %>%
-      filter(Term != term) %>%
       select(Term, Coef, SE, Sig)
   }
 
