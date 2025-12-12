@@ -667,18 +667,35 @@ server <- function(input, output, session) {
 
   # --- Helper functions for model tables ---
 
-  # Helper to clean term names
+  # Helper to clean term names (order matters - check interactions FIRST)
   clean_term <- function(term) {
     case_when(
       term == "(Intercept)" ~ "Intercept",
       term == "time" ~ "Time",
       term == "time_sq" ~ "Time\u00B2",
+      # Quadratic interactions (check before linear time interactions)
       grepl("Mild.*:time_sq", term) ~ "Mild x Time\u00B2",
       grepl("Moderate.*:time_sq", term) ~ "Mod-Sev x Time\u00B2",
+      # Wave interactions (check BEFORE main hearing and wave effects)
+      grepl("Mild.*:wave_factorWave 8", term) ~ "Mild x W8",
+      grepl("Mild.*:wave_factorWave 9", term) ~ "Mild x W9",
+      grepl("Mild.*:wave_factorWave 10", term) ~ "Mild x W10",
+      grepl("Mild.*:wave_factorWave 11", term) ~ "Mild x W11",
+      grepl("Moderate.*:wave_factorWave 8", term) ~ "Mod-Sev x W8",
+      grepl("Moderate.*:wave_factorWave 9", term) ~ "Mod-Sev x W9",
+      grepl("Moderate.*:wave_factorWave 10", term) ~ "Mod-Sev x W10",
+      grepl("Moderate.*:wave_factorWave 11", term) ~ "Mod-Sev x W11",
+      # Linear time interactions
       grepl("Mild.*:time", term) ~ "Mild x Time",
       grepl("Moderate.*:time", term) ~ "Mod-Sev x Time",
+      # Main effects (after interactions)
       grepl("Mild", term) ~ "Mild",
       grepl("Moderate", term) ~ "Mod-Severe",
+      term == "wave_factorWave 8" ~ "Wave 8",
+      term == "wave_factorWave 9" ~ "Wave 9",
+      term == "wave_factorWave 10" ~ "Wave 10",
+      term == "wave_factorWave 11" ~ "Wave 11",
+      # Covariates
       term == "age_c" ~ "Age (centered)",
       term == "sex_factorFemale" ~ "Female",
       grepl("education.*Intermediate", term) ~ "Educ: Intermediate",
@@ -690,18 +707,6 @@ server <- function(input, output, session) {
       term == "cesd_total" ~ "Depression",
       term == "has_diabetes" ~ "Diabetes",
       term == "has_cvd" ~ "CVD",
-      grepl("wave_factorWave 8$", term) ~ "Wave 8",
-      grepl("wave_factorWave 9$", term) ~ "Wave 9",
-      grepl("wave_factorWave 10$", term) ~ "Wave 10",
-      grepl("wave_factorWave 11$", term) ~ "Wave 11",
-      grepl("Mild.*:wave_factorWave 8", term) ~ "Mild x W8",
-      grepl("Mild.*:wave_factorWave 9", term) ~ "Mild x W9",
-      grepl("Mild.*:wave_factorWave 10", term) ~ "Mild x W10",
-      grepl("Mild.*:wave_factorWave 11", term) ~ "Mild x W11",
-      grepl("Moderate.*:wave_factorWave 8", term) ~ "Mod-Sev x W8",
-      grepl("Moderate.*:wave_factorWave 9", term) ~ "Mod-Sev x W9",
-      grepl("Moderate.*:wave_factorWave 10", term) ~ "Mod-Sev x W10",
-      grepl("Moderate.*:wave_factorWave 11", term) ~ "Mod-Sev x W11",
       TRUE ~ term
     )
   }
@@ -713,17 +718,20 @@ server <- function(input, output, session) {
     # Combine all three models
     m1 <- model_results_m1 %>%
       filter(outcome == outcome_name) %>%
-      mutate(model = "M1", coef_str = paste0(round(estimate, 2), sig)) %>%
+      mutate(sig = replace_na(sig, ""),
+             model = "M1", coef_str = paste0(round(estimate, 2), sig)) %>%
       select(term, model, coef_str)
 
     m2 <- model_results_m2 %>%
       filter(outcome == outcome_name) %>%
-      mutate(model = "M2", coef_str = paste0(round(estimate, 2), sig)) %>%
+      mutate(sig = replace_na(sig, ""),
+             model = "M2", coef_str = paste0(round(estimate, 2), sig)) %>%
       select(term, model, coef_str)
 
     m3 <- model_results_m3 %>%
       filter(outcome == outcome_name) %>%
-      mutate(model = "M3", coef_str = paste0(round(estimate, 2), sig)) %>%
+      mutate(sig = replace_na(sig, ""),
+             model = "M3", coef_str = paste0(round(estimate, 2), sig)) %>%
       select(term, model, coef_str)
 
     bind_rows(m1, m2, m3) %>%
@@ -757,17 +765,20 @@ server <- function(input, output, session) {
 
     m1 <- model_quad_m1 %>%
       filter(outcome == outcome_name) %>%
-      mutate(model = "M1", coef_str = paste0(round(estimate, 2), sig)) %>%
+      mutate(sig = replace_na(sig, ""),
+             model = "M1", coef_str = paste0(round(estimate, 2), sig)) %>%
       select(term, model, coef_str)
 
     m2 <- model_quad_m2 %>%
       filter(outcome == outcome_name) %>%
-      mutate(model = "M2", coef_str = paste0(round(estimate, 2), sig)) %>%
+      mutate(sig = replace_na(sig, ""),
+             model = "M2", coef_str = paste0(round(estimate, 2), sig)) %>%
       select(term, model, coef_str)
 
     m3 <- model_quad_m3 %>%
       filter(outcome == outcome_name) %>%
-      mutate(model = "M3", coef_str = paste0(round(estimate, 2), sig)) %>%
+      mutate(sig = replace_na(sig, ""),
+             model = "M3", coef_str = paste0(round(estimate, 2), sig)) %>%
       select(term, model, coef_str)
 
     bind_rows(m1, m2, m3) %>%
@@ -794,17 +805,20 @@ server <- function(input, output, session) {
 
     m1 <- model_dummy_m1 %>%
       filter(outcome == outcome_name) %>%
-      mutate(model = "M1", coef_str = paste0(round(estimate, 2), sig)) %>%
+      mutate(sig = replace_na(sig, ""),
+             model = "M1", coef_str = paste0(round(estimate, 2), sig)) %>%
       select(term, model, coef_str)
 
     m2 <- model_dummy_m2 %>%
       filter(outcome == outcome_name) %>%
-      mutate(model = "M2", coef_str = paste0(round(estimate, 2), sig)) %>%
+      mutate(sig = replace_na(sig, ""),
+             model = "M2", coef_str = paste0(round(estimate, 2), sig)) %>%
       select(term, model, coef_str)
 
     m3 <- model_dummy_m3 %>%
       filter(outcome == outcome_name) %>%
-      mutate(model = "M3", coef_str = paste0(round(estimate, 2), sig)) %>%
+      mutate(sig = replace_na(sig, ""),
+             model = "M3", coef_str = paste0(round(estimate, 2), sig)) %>%
       select(term, model, coef_str)
 
     bind_rows(m1, m2, m3) %>%
