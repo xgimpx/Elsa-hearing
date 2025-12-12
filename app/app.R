@@ -74,6 +74,23 @@ ui <- page_navbar(
     bootswatch = "flatly",
     primary = "#2E86AB"
   ),
+  header = tags$head(
+    tags$style(HTML("
+      /* Remove scroll from model tables */
+      .card-body .shiny-html-output {
+        overflow: visible !important;
+        max-height: none !important;
+      }
+      .card-body {
+        overflow: visible !important;
+      }
+      /* Compact table styling */
+      .table {
+        font-size: 0.85em;
+        margin-bottom: 0;
+      }
+    "))
+  ),
 
   # --- Tab 1: Overview ---
   nav_panel(
@@ -267,17 +284,21 @@ ui <- page_navbar(
     h4("Verbal Fluency", class = "mt-3 mb-2"),
     layout_columns(
       col_widths = c(4, 4, 4),
+      fill = FALSE,
       card(
-        card_header("Linear Hierarchical (M1 \u2192 M2 \u2192 M3)"),
-        card_body(class = "p-2", tableOutput("model_vf_linear"))
+        fill = FALSE,
+        card_header("Linear (M1 \u2192 M2 \u2192 M3)"),
+        card_body(fill = FALSE, tableOutput("model_vf_linear"))
       ),
       card(
-        card_header("Quadratic Time"),
-        card_body(class = "p-2", tableOutput("model_vf_quad"))
+        fill = FALSE,
+        card_header("Quadratic"),
+        card_body(fill = FALSE, tableOutput("model_vf_quad"))
       ),
       card(
+        fill = FALSE,
         card_header("Dummy (Wave)"),
-        card_body(class = "p-2", tableOutput("model_vf_dummy"))
+        card_body(fill = FALSE, tableOutput("model_vf_dummy"))
       )
     ),
 
@@ -285,17 +306,21 @@ ui <- page_navbar(
     h4("Delayed Recall", class = "mt-3 mb-2"),
     layout_columns(
       col_widths = c(4, 4, 4),
+      fill = FALSE,
       card(
-        card_header("Linear Hierarchical (M1 \u2192 M2 \u2192 M3)"),
-        card_body(class = "p-2", tableOutput("model_dr_linear"))
+        fill = FALSE,
+        card_header("Linear (M1 \u2192 M2 \u2192 M3)"),
+        card_body(fill = FALSE, tableOutput("model_dr_linear"))
       ),
       card(
-        card_header("Quadratic Time"),
-        card_body(class = "p-2", tableOutput("model_dr_quad"))
+        fill = FALSE,
+        card_header("Quadratic"),
+        card_body(fill = FALSE, tableOutput("model_dr_quad"))
       ),
       card(
+        fill = FALSE,
         card_header("Dummy (Wave)"),
-        card_body(class = "p-2", tableOutput("model_dr_dummy"))
+        card_body(fill = FALSE, tableOutput("model_dr_dummy"))
       )
     ),
 
@@ -303,17 +328,21 @@ ui <- page_navbar(
     h4("Immediate Recall", class = "mt-3 mb-2"),
     layout_columns(
       col_widths = c(4, 4, 4),
+      fill = FALSE,
       card(
-        card_header("Linear Hierarchical (M1 \u2192 M2 \u2192 M3)"),
-        card_body(class = "p-2", tableOutput("model_ir_linear"))
+        fill = FALSE,
+        card_header("Linear (M1 \u2192 M2 \u2192 M3)"),
+        card_body(fill = FALSE, tableOutput("model_ir_linear"))
       ),
       card(
-        card_header("Quadratic Time"),
-        card_body(class = "p-2", tableOutput("model_ir_quad"))
+        fill = FALSE,
+        card_header("Quadratic"),
+        card_body(fill = FALSE, tableOutput("model_ir_quad"))
       ),
       card(
+        fill = FALSE,
         card_header("Dummy (Wave)"),
-        card_body(class = "p-2", tableOutput("model_ir_dummy"))
+        card_body(fill = FALSE, tableOutput("model_ir_dummy"))
       )
     ),
 
@@ -321,17 +350,21 @@ ui <- page_navbar(
     h4("Serial 7s", class = "mt-3 mb-2"),
     layout_columns(
       col_widths = c(4, 4, 4),
+      fill = FALSE,
       card(
-        card_header("Linear Hierarchical (M1 \u2192 M2 \u2192 M3)"),
-        card_body(class = "p-2", tableOutput("model_s7_linear"))
+        fill = FALSE,
+        card_header("Linear (M1 \u2192 M2 \u2192 M3)"),
+        card_body(fill = FALSE, tableOutput("model_s7_linear"))
       ),
       card(
-        card_header("Quadratic Time"),
-        card_body(class = "p-2", tableOutput("model_s7_quad"))
+        fill = FALSE,
+        card_header("Quadratic"),
+        card_body(fill = FALSE, tableOutput("model_s7_quad"))
       ),
       card(
+        fill = FALSE,
         card_header("Dummy (Wave)"),
-        card_body(class = "p-2", tableOutput("model_s7_dummy"))
+        card_body(fill = FALSE, tableOutput("model_s7_dummy"))
       )
     ),
 
