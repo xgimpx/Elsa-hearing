@@ -107,25 +107,40 @@ source("R/05_longitudinal_analysis.R")
 
 A Shiny dashboard is included for exploring results interactively.
 
-### Launch Dashboard
+### Local Usage
 
 ```r
 # After running the analysis pipeline:
 source("run_dashboard.R")
 ```
 
+### Deploy to Posit Connect Cloud
+
+The dashboard uses **aggregated data only** (no individual-level ELSA data), making it safe for public deployment.
+
+```r
+# Step 1: Run the analysis pipeline (scripts 01-05)
+# Step 2: Create aggregated dashboard data
+source("R/06_create_dashboard_data.R")
+
+# Step 3: Regenerate manifest and deploy
+setwd("app")
+rsconnect::writeManifest()
+# Then deploy via Posit Connect Cloud interface
+```
+
 ### Dashboard Features
 
 - **Overview**: Study design and sample summary
 - **Baseline**: Table 1 characteristics by hearing group
-- **Trajectories**: Interactive cognitive trajectory plots
+- **Trajectories**: Interactive mean trajectory plots with 95% CI
 - **Models**: Hierarchical model comparison with forest plots
 - **Attrition**: Study retention analysis by hearing status
 
 ### Dashboard Requirements
 
 ```r
-install.packages(c("shiny", "bslib", "plotly", "DT"))
+install.packages(c("shiny", "bslib", "plotly", "DT", "tidyverse"))
 ```
 
 ## License
