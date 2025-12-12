@@ -23,27 +23,27 @@ Delayed Recall,Model 3: Fully Adjusted,hearing_acuityMild difficulty (3-5 tones)
 Delayed Recall,Model 3: Fully Adjusted,hearing_acuityModerate-severe (0-2 tones),"-0.185 [-0.401, 0.031]",0.0916,.
 Delayed Recall,Model 3: Fully Adjusted,hearing_acuityMild difficulty (3-5 tones):time,"-0.007 [-0.032, 0.018]",0.5679,
 Delayed Recall,Model 3: Fully Adjusted,hearing_acuityModerate-severe (0-2 tones):time,"-0.029 [-0.068, 0.01]",0.1515,
-Immediate Recall,Model 1: Unadjusted,hearing_acuityMild difficulty (3-5 tones),"-0.002 [-0.006, 0.002]",0.4569,
-Immediate Recall,Model 1: Unadjusted,hearing_acuityModerate-severe (0-2 tones),"0.002 [-0.004, 0.008]",0.6033,
-Immediate Recall,Model 1: Unadjusted,hearing_acuityMild difficulty (3-5 tones):time,"0.001 [-0.001, 0.003]",0.3169,
-Immediate Recall,Model 1: Unadjusted,hearing_acuityModerate-severe (0-2 tones):time,"0.002 [0, 0.004]",0.0578,.
-Immediate Recall,Model 2: Sociodemographic,hearing_acuityMild difficulty (3-5 tones),"-0.002 [-0.006, 0.002]",0.4299,
-Immediate Recall,Model 2: Sociodemographic,hearing_acuityModerate-severe (0-2 tones),"0 [-0.006, 0.006]",0.8804,
-Immediate Recall,Model 2: Sociodemographic,hearing_acuityMild difficulty (3-5 tones):time,"0.001 [-0.001, 0.003]",0.3587,
-Immediate Recall,Model 2: Sociodemographic,hearing_acuityModerate-severe (0-2 tones):time,"0.001 [-0.001, 0.003]",0.1439,
-Immediate Recall,Model 3: Fully Adjusted,hearing_acuityMild difficulty (3-5 tones),"-0.002 [-0.006, 0.002]",0.48,
-Immediate Recall,Model 3: Fully Adjusted,hearing_acuityModerate-severe (0-2 tones),"0.001 [-0.005, 0.007]",0.7849,
-Immediate Recall,Model 3: Fully Adjusted,hearing_acuityMild difficulty (3-5 tones):time,"0.001 [-0.001, 0.003]",0.3576,
-Immediate Recall,Model 3: Fully Adjusted,hearing_acuityModerate-severe (0-2 tones):time,"0.001 [-0.001, 0.003]",0.1389,
-Serial 7s,Model 1: Unadjusted,hearing_acuityMild difficulty (3-5 tones),"-2.778 [-6.967, 1.411]",0.1937,
-Serial 7s,Model 1: Unadjusted,hearing_acuityModerate-severe (0-2 tones),"-5.461 [-11.629, 0.707]",0.0827,.
-Serial 7s,Model 1: Unadjusted,hearing_acuityMild difficulty (3-5 tones):time,"0.752 [-0.487, 1.991]",0.2336,
-Serial 7s,Model 1: Unadjusted,hearing_acuityModerate-severe (0-2 tones):time,"0.226 [-1.705, 2.157]",0.8184,
-Serial 7s,Model 2: Sociodemographic,hearing_acuityMild difficulty (3-5 tones),"-2.839 [-7.278, 1.6]",0.2101,
-Serial 7s,Model 2: Sociodemographic,hearing_acuityModerate-severe (0-2 tones),"-5.406 [-11.988, 1.176]",0.1075,
-Serial 7s,Model 2: Sociodemographic,hearing_acuityMild difficulty (3-5 tones):time,"1.023 [-0.365, 2.411]",0.1486,
-Serial 7s,Model 2: Sociodemographic,hearing_acuityModerate-severe (0-2 tones):time,"0.426 [-1.761, 2.613]",0.7029,
-Serial 7s,Model 3: Fully Adjusted,hearing_acuityMild difficulty (3-5 tones),"-2.524 [-6.965, 1.917]",0.2654,
-Serial 7s,Model 3: Fully Adjusted,hearing_acuityModerate-severe (0-2 tones),"-4.466 [-11.069, 2.137]",0.185,
-Serial 7s,Model 3: Fully Adjusted,hearing_acuityMild difficulty (3-5 tones):time,"0.92 [-0.477, 2.317]",0.1967,
-Serial 7s,Model 3: Fully Adjusted,hearing_acuityModerate-severe (0-2 tones):time,"0.232 [-1.973, 2.437]",0.8367,
+Immediate Recall,Model 1: Unadjusted,hearing_acuityMild difficulty (3-5 tones),"-0.198 [-0.32, -0.076]",0.0015,**
+Immediate Recall,Model 1: Unadjusted,hearing_acuityModerate-severe (0-2 tones),"-0.431 [-0.607, -0.255]",0,***
+Immediate Recall,Model 1: Unadjusted,hearing_acuityMild difficulty (3-5 tones):time,"-0.015 [-0.037, 0.007]",0.1697,
+Immediate Recall,Model 1: Unadjusted,hearing_acuityModerate-severe (0-2 tones):time,"-0.019 [-0.052, 0.014]",0.2578,
+Immediate Recall,Model 2: Sociodemographic,hearing_acuityMild difficulty (3-5 tones),"-0.132 [-0.255, -0.009]",0.0373,*
+Immediate Recall,Model 2: Sociodemographic,hearing_acuityModerate-severe (0-2 tones),"-0.242 [-0.422, -0.062]",0.0089,**
+Immediate Recall,Model 2: Sociodemographic,hearing_acuityMild difficulty (3-5 tones):time,"-0.005 [-0.029, 0.019]",0.6617,
+Immediate Recall,Model 2: Sociodemographic,hearing_acuityModerate-severe (0-2 tones):time,"-0.01 [-0.047, 0.027]",0.5722,
+Immediate Recall,Model 3: Fully Adjusted,hearing_acuityMild difficulty (3-5 tones),"-0.101 [-0.224, 0.022]",0.1058,
+Immediate Recall,Model 3: Fully Adjusted,hearing_acuityModerate-severe (0-2 tones),"-0.168 [-0.346, 0.01]",0.0667,.
+Immediate Recall,Model 3: Fully Adjusted,hearing_acuityMild difficulty (3-5 tones):time,"-0.006 [-0.03, 0.018]",0.5882,
+Immediate Recall,Model 3: Fully Adjusted,hearing_acuityModerate-severe (0-2 tones):time,"-0.013 [-0.048, 0.022]",0.4709,
+Serial 7s,Model 1: Unadjusted,hearing_acuityMild difficulty (3-5 tones),"-0.199 [-0.315, -0.083]",8e-4,***
+Serial 7s,Model 1: Unadjusted,hearing_acuityModerate-severe (0-2 tones),"-0.365 [-0.536, -0.194]",0,***
+Serial 7s,Model 1: Unadjusted,hearing_acuityMild difficulty (3-5 tones):time,"0.007 [-0.015, 0.029]",0.5596,
+Serial 7s,Model 1: Unadjusted,hearing_acuityModerate-severe (0-2 tones):time,"0.017 [-0.018, 0.052]",0.3447,
+Serial 7s,Model 2: Sociodemographic,hearing_acuityMild difficulty (3-5 tones),"-0.195 [-0.318, -0.072]",0.0021,**
+Serial 7s,Model 2: Sociodemographic,hearing_acuityModerate-severe (0-2 tones),"-0.236 [-0.418, -0.054]",0.0115,*
+Serial 7s,Model 2: Sociodemographic,hearing_acuityMild difficulty (3-5 tones):time,"0.02 [-0.004, 0.044]",0.0894,.
+Serial 7s,Model 2: Sociodemographic,hearing_acuityModerate-severe (0-2 tones):time,"0.037 [0, 0.074]",0.0555,.
+Serial 7s,Model 3: Fully Adjusted,hearing_acuityMild difficulty (3-5 tones),"-0.189 [-0.314, -0.064]",0.0031,**
+Serial 7s,Model 3: Fully Adjusted,hearing_acuityModerate-severe (0-2 tones),"-0.206 [-0.39, -0.022]",0.029,*
+Serial 7s,Model 3: Fully Adjusted,hearing_acuityMild difficulty (3-5 tones):time,"0.019 [-0.005, 0.043]",0.1187,
+Serial 7s,Model 3: Fully Adjusted,hearing_acuityModerate-severe (0-2 tones):time,"0.033 [-0.006, 0.072]",0.0882,.

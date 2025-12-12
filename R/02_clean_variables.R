@@ -105,6 +105,10 @@ clean_wave <- function(df, wave_num) {
     mutate(across(where(is.numeric), recode_missing))
 
   # Step 5c: Rename cognitive variables to clearer names
+
+  # First, convert column names to lowercase to handle ELSA's mixed case
+  names(df) <- tolower(names(df))
+
   # rename_with() renames columns based on a function
   # We use case_when() to map old names to new names
   df <- df %>%
@@ -112,26 +116,27 @@ clean_wave <- function(df, wave_num) {
       # Verbal fluency
       . == "cfani" ~ "cf_animals",
 
-      # Word list encoding
-      . == "cflisen" ~ "cf_list_encoding",
+      # Immediate recall total (0-10 words recalled immediately after presentation)
+      # CfLisEn is the ACTUAL immediate recall score, not cflisp1-5 which are position flags
+      . == "cflisen" ~ "cf_imm_recall_total",
 
-      # Immediate recall (5 positions from the word list)
-      . == "cflisp1" ~ "cf_imm_recall_1",
-      . == "cflisp2" ~ "cf_imm_recall_2",
-      . == "cflisp3" ~ "cf_imm_recall_3",
-      . == "cflisp4" ~ "cf_imm_recall_4",
-      . == "cflisp5" ~ "cf_imm_recall_5",
+      # Primacy/recency position flags (0/1 indicators, NOT used for scoring)
+      . == "cflisp1" ~ "cf_position_flag_1",
+      . == "cflisp2" ~ "cf_position_flag_2",
+      . == "cflisp3" ~ "cf_position_flag_3",
+      . == "cflisp4" ~ "cf_position_flag_4",
+      . == "cflisp5" ~ "cf_position_flag_5",
 
       # Delayed recall
       . == "cflisd" ~ "cf_delayed_recall",
 
       # Serial 7s (5 subtractions: 100-7=93, 93-7=86, etc.)
-      . == "cfsva" ~ "cf_serial7_1",
-      . == "cfsvb" ~ "cf_serial7_2",
-      . == "cfsvc" ~ "cf_serial7_3",
-      . == "cfsvd" ~ "cf_serial7_4",
-      . == "cfsve" ~ "cf_serial7_5",
-      . == "cfsvch" ~ "cf_serial7_check",
+      # CfSvA-E are the actual answers given by participants
+      . == "cfsva" ~ "cf_serial7_ans_1",  # Correct = 93
+      . == "cfsvb" ~ "cf_serial7_ans_2",  # Correct = 86
+      . == "cfsvc" ~ "cf_serial7_ans_3",  # Correct = 79
+      . == "cfsvd" ~ "cf_serial7_ans_4",  # Correct = 72
+      . == "cfsve" ~ "cf_serial7_ans_5",  # Correct = 65
 
       # Other cognitive scores
       . == "cfdscr" ~ "cf_date_score",
@@ -142,25 +147,26 @@ clean_wave <- function(df, wave_num) {
     ), .cols = everything())
 
   # Step 5d: Create derived cognitive scores
+  # Note: cf_imm_recall_total comes directly from cflisen (0-10 scale)
   df <- df %>%
     mutate(
-      # Serial 7s total: Sum of correct subtractions (0-5)
-      # We sum the 5 individual serial 7 items
-      # na.rm = FALSE means if ANY item is missing, the total is also missing
-      cf_serial7_total = rowSums(
-        select(., starts_with("cf_serial7_")) %>%
-          select(-any_of("cf_serial7_check")),  # Exclude the check variable
-        na.rm = FALSE
-      ),
-
-      # Immediate recall total: Sum of all 5 word positions (0-10 typically)
-      cf_imm_recall_total = rowSums(
-        select(., starts_with("cf_imm_recall_")),
-        na.rm = FALSE
+      # Serial 7s total: Count how many of the 5 subtractions are correct
+      # Correct answers: 93, 86, 79, 72, 65
+      cf_serial7_total = (cf_serial7_ans_1 == 93) +
+                         (cf_serial7_ans_2 == 86) +
+                         (cf_serial7_ans_3 == 79) +
+                         (cf_serial7_ans_4 == 72) +
+                         (cf_serial7_ans_5 == 65),
+      # Convert to NA if all answers are missing
+      cf_serial7_total = ifelse(
+        is.na(cf_serial7_ans_1) & is.na(cf_serial7_ans_2) &
+        is.na(cf_serial7_ans_3) & is.na(cf_serial7_ans_4) &
+        is.na(cf_serial7_ans_5),
+        NA_real_, cf_serial7_total
       ),
 
       # Composite memory score: Immediate + Delayed recall combined
-      # This gives an overall memory performance measure
+      # This gives an overall memory performance measure (0-20 range)
       cf_memory_composite = cf_imm_recall_total + cf_delayed_recall
     )
 

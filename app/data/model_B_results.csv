@@ -51,55 +51,55 @@ Delayed Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 10,-0.0
 Delayed Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 10,-0.171,0.161,0.2886,
 Delayed Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 11,-0.05,0.105,0.6358,
 Delayed Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 11,-0.272,0.175,0.1203,
-Immediate Recall,(Intercept),1.007,0.003,0,***
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones),-0.002,0.003,0.5337,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones),0.001,0.004,0.7315,
-Immediate Recall,wave_factorWave 8,0.003,0.003,0.2803,
-Immediate Recall,wave_factorWave 9,0.001,0.003,0.7522,
-Immediate Recall,wave_factorWave 10,-0.003,0.003,0.3889,
-Immediate Recall,wave_factorWave 11,0.002,0.003,0.5407,
-Immediate Recall,age_c,0,0,0.2252,
-Immediate Recall,sex_factorFemale,-0.002,0.001,0.1489,
-Immediate Recall,education_3catIntermediate (A/O level),-0.001,0.002,0.5994,
-Immediate Recall,education_3catHigher (degree/equiv),0.002,0.002,0.221,
-Immediate Recall,wealth_quintileQ2,0.002,0.002,0.5207,
-Immediate Recall,wealth_quintileQ3,-0.003,0.002,0.2328,
-Immediate Recall,wealth_quintileQ4,-0.004,0.002,0.1269,
-Immediate Recall,wealth_quintileQ5 (Highest),-0.005,0.003,0.0682,.
-Immediate Recall,cesd_total,-0.001,0,0.1588,
-Immediate Recall,has_diabetes,-0.005,0.005,0.2882,
-Immediate Recall,has_cvd,-0.001,0.003,0.8849,
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 8,0.003,0.004,0.5243,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 8,0.005,0.006,0.443,
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 9,-0.001,0.004,0.739,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 9,-0.002,0.006,0.7148,
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 10,0.009,0.005,0.067,.
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 10,0.014,0.008,0.0758,.
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 11,0.003,0.005,0.533,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 11,0.013,0.008,0.1246,
-Serial 7s,(Intercept),393.599,3.238,0,***
-Serial 7s,hearing_acuityMild difficulty (3-5 tones),-0.971,2.997,0.746,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones),-5.652,4.364,0.1953,
-Serial 7s,wave_factorWave 8,-2.212,2.917,0.4484,
-Serial 7s,wave_factorWave 9,-4.262,3.013,0.1572,
-Serial 7s,wave_factorWave 10,-3.907,3.379,0.2475,
-Serial 7s,wave_factorWave 11,-4.699,3.477,0.1766,
-Serial 7s,age_c,-0.137,0.092,0.1383,
-Serial 7s,sex_factorFemale,-0.715,1.538,0.642,
-Serial 7s,education_3catIntermediate (A/O level),-0.234,2.017,0.9078,
-Serial 7s,education_3catHigher (degree/equiv),-1.093,1.996,0.5842,
-Serial 7s,wealth_quintileQ2,1.06,2.72,0.6967,
-Serial 7s,wealth_quintileQ3,4.668,2.71,0.0851,.
-Serial 7s,wealth_quintileQ4,2.249,2.685,0.4023,
-Serial 7s,wealth_quintileQ5 (Highest),3.744,2.728,0.17,
-Serial 7s,cesd_total,-0.697,0.438,0.1116,
-Serial 7s,has_diabetes,-0.866,5.316,0.8706,
-Serial 7s,has_cvd,0.72,3.789,0.8494,
-Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 8,-3.188,4.358,0.4644,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 8,2.283,6.343,0.7189,
-Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 9,4.776,4.509,0.2895,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 9,4.379,6.67,0.5115,
-Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 10,1.737,5.084,0.7326,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 10,8.983,8.184,0.2724,
-Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 11,8.154,5.325,0.1257,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 11,-6.664,8.743,0.4459,
+Immediate Recall,(Intercept),4.906,0.09,0,***
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones),-0.116,0.068,0.0867,.
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones),-0.202,0.098,0.0397,*
+Immediate Recall,wave_factorWave 8,-0.138,0.052,0.0082,**
+Immediate Recall,wave_factorWave 9,-0.274,0.054,0,***
+Immediate Recall,wave_factorWave 10,-0.669,0.062,0,***
+Immediate Recall,wave_factorWave 11,-0.578,0.065,0,***
+Immediate Recall,age_c,-0.067,0.003,0,***
+Immediate Recall,sex_factorFemale,0.423,0.049,0,***
+Immediate Recall,education_3catIntermediate (A/O level),0.533,0.064,0,***
+Immediate Recall,education_3catHigher (degree/equiv),0.741,0.063,0,***
+Immediate Recall,wealth_quintileQ2,0.313,0.083,2e-4,***
+Immediate Recall,wealth_quintileQ3,0.363,0.083,0,***
+Immediate Recall,wealth_quintileQ4,0.632,0.083,0,***
+Immediate Recall,wealth_quintileQ5 (Highest),0.772,0.086,0,***
+Immediate Recall,cesd_total,-0.081,0.013,0,***
+Immediate Recall,has_diabetes,-0.058,0.161,0.7208,
+Immediate Recall,has_cvd,-0.081,0.114,0.4782,
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 8,0.037,0.078,0.6313,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 8,0.064,0.113,0.571,
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 9,-0.031,0.081,0.7005,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 9,-0.032,0.119,0.7895,
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 10,0.006,0.094,0.9475,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 10,0.025,0.152,0.8712,
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 11,-0.065,0.099,0.5117,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 11,-0.21,0.164,0.2001,
+Serial 7s,(Intercept),3.527,0.094,0,***
+Serial 7s,hearing_acuityMild difficulty (3-5 tones),-0.156,0.072,0.0309,*
+Serial 7s,hearing_acuityModerate-severe (0-2 tones),-0.234,0.105,0.0264,*
+Serial 7s,wave_factorWave 8,-0.037,0.058,0.523,
+Serial 7s,wave_factorWave 9,-0.06,0.061,0.3257,
+Serial 7s,wave_factorWave 10,-0.115,0.069,0.0952,.
+Serial 7s,wave_factorWave 11,-0.254,0.071,4e-4,***
+Serial 7s,age_c,-0.009,0.003,0.003,**
+Serial 7s,sex_factorFemale,-0.291,0.05,0,***
+Serial 7s,education_3catIntermediate (A/O level),0.326,0.065,0,***
+Serial 7s,education_3catHigher (degree/equiv),0.438,0.065,0,***
+Serial 7s,wealth_quintileQ2,0.117,0.086,0.1727,
+Serial 7s,wealth_quintileQ3,0.233,0.086,0.0071,**
+Serial 7s,wealth_quintileQ4,0.381,0.086,0,***
+Serial 7s,wealth_quintileQ5 (Highest),0.461,0.088,0,***
+Serial 7s,cesd_total,-0.03,0.014,0.0337,*
+Serial 7s,has_diabetes,-0.252,0.169,0.1363,
+Serial 7s,has_cvd,0.02,0.119,0.8651,
+Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 8,-0.027,0.087,0.7552,
+Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 8,0.145,0.127,0.2537,
+Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 9,0.014,0.091,0.8743,
+Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 9,0.153,0.135,0.2571,
+Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 10,0.065,0.104,0.5306,
+Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 10,0.289,0.169,0.0877,.
+Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 11,0.172,0.109,0.1151,
+Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 11,0.204,0.181,0.261,

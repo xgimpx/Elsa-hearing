@@ -33,37 +33,37 @@ Delayed Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 10,-0.0
 Delayed Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 10,-0.105,0.147,0.4736,
 Delayed Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 11,-0.088,0.098,0.365,
 Delayed Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 11,-0.152,0.159,0.3386,
-Immediate Recall,(Intercept),1.005,0.002,0,***
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones),-0.002,0.003,0.4112,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones),0,0.004,0.8955,
-Immediate Recall,wave_factorWave 8,0.002,0.003,0.4434,
-Immediate Recall,wave_factorWave 9,0,0.003,0.9443,
-Immediate Recall,wave_factorWave 10,-0.002,0.003,0.5376,
-Immediate Recall,wave_factorWave 11,0.001,0.003,0.732,
-Immediate Recall,age_c,0,0,0.1598,
-Immediate Recall,sex_factorFemale,-0.003,0.001,0.0366,*
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 8,0.003,0.004,0.4101,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 8,0.008,0.005,0.1644,
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 9,0.001,0.004,0.8942,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 9,0.002,0.006,0.7227,
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 10,0.007,0.004,0.1106,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 10,0.017,0.007,0.0166,*
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 11,0.003,0.005,0.4584,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 11,0.011,0.007,0.1541,
-Serial 7s,(Intercept),395.509,1.977,0,***
-Serial 7s,hearing_acuityMild difficulty (3-5 tones),-2.427,2.769,0.3807,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones),-7.935,4.007,0.0477,*
-Serial 7s,wave_factorWave 8,-3.005,2.677,0.2618,
-Serial 7s,wave_factorWave 9,-3.719,2.761,0.1781,
-Serial 7s,wave_factorWave 10,-3.412,3.082,0.2683,
-Serial 7s,wave_factorWave 11,-4.293,3.171,0.1758,
-Serial 7s,age_c,-0.1,0.078,0.2028,
-Serial 7s,sex_factorFemale,-0.685,1.379,0.6196,
-Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 8,-0.182,4.047,0.9641,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 8,5.422,5.881,0.3566,
-Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 9,4.459,4.195,0.2878,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 9,4.988,6.17,0.4188,
-Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 10,2.263,4.712,0.631,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 10,7.711,7.419,0.2986,
-Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 11,7.774,4.935,0.1152,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 11,-3.545,7.929,0.6548,
+Immediate Recall,(Intercept),5.72,0.051,0,***
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones),-0.23,0.066,5e-4,***
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones),-0.45,0.095,0,***
+Immediate Recall,wave_factorWave 8,-0.073,0.048,0.1339,
+Immediate Recall,wave_factorWave 9,-0.156,0.051,0.002,**
+Immediate Recall,wave_factorWave 10,-0.509,0.058,0,***
+Immediate Recall,wave_factorWave 11,-0.415,0.06,0,***
+Immediate Recall,age_c,-0.069,0.003,0,***
+Immediate Recall,sex_factorFemale,0.226,0.048,0,***
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 8,0.066,0.073,0.3628,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 8,0.018,0.106,0.8652,
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 9,-0.047,0.076,0.5382,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 9,-0.087,0.112,0.435,
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 10,-0.073,0.088,0.4109,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 10,-0.067,0.14,0.6333,
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 11,-0.113,0.093,0.223,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 11,-0.234,0.151,0.1209,
+Serial 7s,(Intercept),4.048,0.051,0,***
+Serial 7s,hearing_acuityMild difficulty (3-5 tones),-0.148,0.067,0.0271,*
+Serial 7s,hearing_acuityModerate-severe (0-2 tones),-0.377,0.097,1e-4,***
+Serial 7s,wave_factorWave 8,0.031,0.053,0.5561,
+Serial 7s,wave_factorWave 9,0.015,0.055,0.7805,
+Serial 7s,wave_factorWave 10,-0.022,0.062,0.7289,
+Serial 7s,wave_factorWave 11,-0.16,0.064,0.0129,*
+Serial 7s,age_c,-0.013,0.003,0,***
+Serial 7s,sex_factorFemale,-0.399,0.046,0,***
+Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 8,-0.1,0.081,0.2155,
+Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 8,0.05,0.118,0.6728,
+Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 9,-0.052,0.084,0.5353,
+Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 9,0.108,0.124,0.3834,
+Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 10,-0.022,0.096,0.8212,
+Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 10,0.167,0.152,0.2745,
+Serial 7s,hearing_acuityMild difficulty (3-5 tones):wave_factorWave 11,0.064,0.101,0.526,
+Serial 7s,hearing_acuityModerate-severe (0-2 tones):wave_factorWave 11,0.042,0.164,0.7964,

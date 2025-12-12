@@ -27,31 +27,31 @@ Delayed Recall,wealth_quintileQ4,0.84,0.103,0,***
 Delayed Recall,wealth_quintileQ5 (Highest),1.048,0.105,0,***
 Delayed Recall,hearing_acuityMild difficulty (3-5 tones):time,-0.006,0.013,0.6114,
 Delayed Recall,hearing_acuityModerate-severe (0-2 tones):time,-0.029,0.02,0.1479,
-Immediate Recall,(Intercept),1.007,0.003,0,***
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones),-0.002,0.002,0.4299,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones),0,0.003,0.8804,
-Immediate Recall,time,-0,0,0.9341,
-Immediate Recall,age_c,0,0,0.2357,
-Immediate Recall,sex_factorFemale,-0.002,0.001,0.1569,
-Immediate Recall,education_3catIntermediate (A/O level),-0.001,0.002,0.4991,
-Immediate Recall,education_3catHigher (degree/equiv),0.002,0.002,0.2714,
-Immediate Recall,wealth_quintileQ2,0.001,0.002,0.6185,
-Immediate Recall,wealth_quintileQ3,-0.003,0.002,0.2715,
-Immediate Recall,wealth_quintileQ4,-0.003,0.002,0.2358,
-Immediate Recall,wealth_quintileQ5 (Highest),-0.004,0.002,0.1326,
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones):time,0.001,0.001,0.3587,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones):time,0.001,0.001,0.1439,
-Serial 7s,(Intercept),391.919,2.77,0,***
-Serial 7s,hearing_acuityMild difficulty (3-5 tones),-2.839,2.265,0.2101,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones),-5.406,3.358,0.1075,
-Serial 7s,time,-0.662,0.467,0.1568,
-Serial 7s,age_c,-0.158,0.091,0.0845,.
-Serial 7s,sex_factorFemale,-1.064,1.556,0.494,
-Serial 7s,education_3catIntermediate (A/O level),0.601,2.036,0.7679,
-Serial 7s,education_3catHigher (degree/equiv),-0.948,2.015,0.638,
-Serial 7s,wealth_quintileQ2,1.963,2.684,0.4645,
-Serial 7s,wealth_quintileQ3,3.011,2.662,0.258,
-Serial 7s,wealth_quintileQ4,2.386,2.648,0.3676,
-Serial 7s,wealth_quintileQ5 (Highest),4.634,2.665,0.0822,.
-Serial 7s,hearing_acuityMild difficulty (3-5 tones):time,1.023,0.708,0.1486,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones):time,0.426,1.116,0.7029,
+Immediate Recall,(Intercept),4.707,0.082,0,***
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones),-0.132,0.063,0.0373,*
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones),-0.242,0.092,0.0089,**
+Immediate Recall,time,-0.079,0.008,0,***
+Immediate Recall,age_c,-0.067,0.003,0,***
+Immediate Recall,sex_factorFemale,0.396,0.049,0,***
+Immediate Recall,education_3catIntermediate (A/O level),0.545,0.064,0,***
+Immediate Recall,education_3catHigher (degree/equiv),0.776,0.063,0,***
+Immediate Recall,wealth_quintileQ2,0.381,0.082,0,***
+Immediate Recall,wealth_quintileQ3,0.44,0.081,0,***
+Immediate Recall,wealth_quintileQ4,0.725,0.082,0,***
+Immediate Recall,wealth_quintileQ5 (Highest),0.883,0.083,0,***
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones):time,-0.005,0.012,0.6617,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones):time,-0.01,0.019,0.5722,
+Serial 7s,(Intercept),3.471,0.084,0,***
+Serial 7s,hearing_acuityMild difficulty (3-5 tones),-0.195,0.063,0.0021,**
+Serial 7s,hearing_acuityModerate-severe (0-2 tones),-0.236,0.093,0.0115,*
+Serial 7s,time,-0.029,0.008,3e-4,***
+Serial 7s,age_c,-0.008,0.003,0.0036,**
+Serial 7s,sex_factorFemale,-0.296,0.049,0,***
+Serial 7s,education_3catIntermediate (A/O level),0.328,0.064,0,***
+Serial 7s,education_3catHigher (degree/equiv),0.447,0.064,0,***
+Serial 7s,wealth_quintileQ2,0.144,0.084,0.0874,.
+Serial 7s,wealth_quintileQ3,0.27,0.084,0.0013,**
+Serial 7s,wealth_quintileQ4,0.414,0.084,0,***
+Serial 7s,wealth_quintileQ5 (Highest),0.513,0.084,0,***
+Serial 7s,hearing_acuityMild difficulty (3-5 tones):time,0.02,0.012,0.0894,.
+Serial 7s,hearing_acuityModerate-severe (0-2 tones):time,0.037,0.019,0.0555,.

@@ -15,19 +15,19 @@ Delayed Recall,age_c,-0.088,0.003,0,***
 Delayed Recall,sex_factorFemale,0.312,0.06,0,***
 Delayed Recall,hearing_acuityMild difficulty (3-5 tones):time,-0.011,0.012,0.3537,
 Delayed Recall,hearing_acuityModerate-severe (0-2 tones):time,-0.015,0.019,0.4055,
-Immediate Recall,(Intercept),1.005,0.002,0,***
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones),-0.002,0.002,0.4569,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones),0.002,0.003,0.6033,
-Immediate Recall,time,-0,0,0.8486,
-Immediate Recall,age_c,0,0,0.1723,
-Immediate Recall,sex_factorFemale,-0.002,0.001,0.0749,.
-Immediate Recall,hearing_acuityMild difficulty (3-5 tones):time,0.001,0.001,0.3169,
-Immediate Recall,hearing_acuityModerate-severe (0-2 tones):time,0.002,0.001,0.0578,.
-Serial 7s,(Intercept),394.632,1.599,0,***
-Serial 7s,hearing_acuityMild difficulty (3-5 tones),-2.778,2.137,0.1937,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones),-5.461,3.147,0.0827,.
-Serial 7s,time,-0.534,0.41,0.1931,
-Serial 7s,age_c,-0.124,0.079,0.1129,
-Serial 7s,sex_factorFemale,-0.79,1.415,0.5765,
-Serial 7s,hearing_acuityMild difficulty (3-5 tones):time,0.752,0.632,0.2336,
-Serial 7s,hearing_acuityModerate-severe (0-2 tones):time,0.226,0.985,0.8184,
+Immediate Recall,(Intercept),5.741,0.049,0,***
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones),-0.198,0.062,0.0015,**
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones),-0.431,0.09,0,***
+Immediate Recall,time,-0.06,0.007,0,***
+Immediate Recall,age_c,-0.069,0.003,0,***
+Immediate Recall,sex_factorFemale,0.227,0.048,0,***
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones):time,-0.015,0.011,0.1697,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones):time,-0.019,0.017,0.2578,
+Serial 7s,(Intercept),4.084,0.046,0,***
+Serial 7s,hearing_acuityMild difficulty (3-5 tones),-0.199,0.059,8e-4,***
+Serial 7s,hearing_acuityModerate-severe (0-2 tones),-0.365,0.087,0,***
+Serial 7s,time,-0.016,0.007,0.0311,*
+Serial 7s,age_c,-0.013,0.003,0,***
+Serial 7s,sex_factorFemale,-0.4,0.046,0,***
+Serial 7s,hearing_acuityMild difficulty (3-5 tones):time,0.007,0.011,0.5596,
+Serial 7s,hearing_acuityModerate-severe (0-2 tones):time,0.017,0.018,0.3447,
