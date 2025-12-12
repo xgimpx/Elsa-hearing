@@ -392,6 +392,57 @@ ui <- page_navbar(
         "Negative values indicate lower scores or faster decline. ",
         tags$strong("Sig:"), " *** p<0.001, ** p<0.01, * p<0.05, . p<0.1"
       )
+    ),
+
+    # Interpretation panel
+    card(
+      card_header(
+        class = "bg-light",
+        icon("lightbulb"), " Interpretation of Findings"
+      ),
+      card_body(
+        tags$h5("Key Results"),
+        tags$ul(
+          tags$li(tags$strong("Baseline differences are large and significant:"),
+                  " Hearing-impaired groups show 0.3-0.5 points lower cognition at baseline (p < 0.001)."),
+          tags$li(tags$strong("Differential decline is in the expected direction but not statistically significant:"),
+                  " The severe hearing group declines ~0.12 points more over 8 years (interaction p > 0.05).")
+        ),
+
+        tags$h5("Why Aren't the Interaction Effects Significant?", class = "mt-3"),
+        tags$p("Three factors contribute to the non-significant hearing \u00D7 time interactions:"),
+        tags$ol(
+          tags$li(tags$strong("Survivor bias (MNAR):"),
+                  " 70% of the moderate-severe hearing group dropped out by Wave 11. ",
+                  "Those who dropped out had ", tags$em("5 points lower"), " verbal fluency at baseline. ",
+                  "Importantly, participants who dropped out were declining ", tags$em("faster"),
+                  " than those who stayed (p = 0.0003). This violates the Missing At Random assumption."),
+          tags$li(tags$strong("Small effect size:"),
+                  " The estimated differential decline is ~0.015 points/year, or 0.12 points over 8 years. ",
+                  "This represents only ~0.09 SD \u2014 a genuinely small effect."),
+          tags$li(tags$strong("Limited statistical power:"),
+                  " Only 124 participants with moderate-severe hearing loss completed all 5 waves. ",
+                  "Detecting a 0.09 SD effect would require ~500+ participants per group.")
+        ),
+
+        tags$h5("What Mixed Models Can and Cannot Do", class = "mt-3"),
+        tags$p(
+          "Mixed models use ", tags$em("all available data"), " (not just completers) and provide unbiased estimates ",
+          "under Missing At Random (MAR). However, our data shows evidence of Missing Not At Random (MNAR): ",
+          "dropout is predicted by the rate of cognitive decline itself. ",
+          "This means the true differential decline for hearing-impaired groups may be ",
+          tags$strong("larger"), " than estimated."
+        ),
+
+        tags$div(
+          class = "alert alert-secondary mt-3 mb-0",
+          icon("exclamation-triangle"), " ",
+          tags$strong("Bottom line:"),
+          " The data are consistent with hearing loss being associated with both lower baseline cognition ",
+          "and slightly steeper decline. The trajectory effect is in the expected direction but is small, ",
+          "likely underestimated due to survivor bias, and underpowered to reach statistical significance."
+        )
+      )
     )
   ),
 
