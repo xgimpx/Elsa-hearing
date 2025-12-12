@@ -103,6 +103,31 @@ source("R/05_longitudinal_analysis.R")
 - `output/tables/model_results_fully_adjusted.csv` - Full model results
 - `output/figures/predicted_trajectory_*.png` - Cognitive trajectories by hearing status
 
+## Interactive Dashboard
+
+A Shiny dashboard is included for exploring results interactively.
+
+### Launch Dashboard
+
+```r
+# After running the analysis pipeline:
+source("run_dashboard.R")
+```
+
+### Dashboard Features
+
+- **Overview**: Study design and sample summary
+- **Baseline**: Table 1 characteristics by hearing group
+- **Trajectories**: Interactive cognitive trajectory plots
+- **Models**: Hierarchical model comparison with forest plots
+- **Attrition**: Study retention analysis by hearing status
+
+### Dashboard Requirements
+
+```r
+install.packages(c("shiny", "bslib", "plotly", "DT"))
+```
+
 ## License
 
 Analysis code is provided under MIT License. ELSA data is subject to UK Data Service terms.
