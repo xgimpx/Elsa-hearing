@@ -711,6 +711,26 @@ server <- function(input, output, session) {
     )
   }
 
+  # Function to format coefficients smartly (avoid showing 0 for small non-zero values)
+  format_coef <- function(x) {
+    sapply(x, function(val) {
+      if (is.na(val)) return(NA_character_)
+      abs_val <- abs(val)
+      if (abs_val == 0) {
+        "0"
+      } else if (abs_val < 0.005) {
+        # Very small: show 3 decimal places
+        format(round(val, 3), nsmall = 3)
+      } else if (abs_val < 0.01) {
+        # Small: show 2 decimal places but won't round to 0
+        format(round(val, 2), nsmall = 2)
+      } else {
+        # Normal: 2 decimal places
+        as.character(round(val, 2))
+      }
+    })
+  }
+
   # Function to create hierarchical linear table (M1, M2, M3 with all coefficients)
   make_linear_table <- function(outcome_name) {
     if (is.null(model_results_m1) || is.null(model_results_m2) || is.null(model_results_m3)) return(NULL)
@@ -719,19 +739,19 @@ server <- function(input, output, session) {
     m1 <- model_results_m1 %>%
       filter(outcome == outcome_name) %>%
       mutate(sig = replace_na(sig, ""),
-             model = "M1", coef_str = paste0(round(estimate, 2), sig)) %>%
+             model = "M1", coef_str = paste0(format_coef(estimate), sig)) %>%
       select(term, model, coef_str)
 
     m2 <- model_results_m2 %>%
       filter(outcome == outcome_name) %>%
       mutate(sig = replace_na(sig, ""),
-             model = "M2", coef_str = paste0(round(estimate, 2), sig)) %>%
+             model = "M2", coef_str = paste0(format_coef(estimate), sig)) %>%
       select(term, model, coef_str)
 
     m3 <- model_results_m3 %>%
       filter(outcome == outcome_name) %>%
       mutate(sig = replace_na(sig, ""),
-             model = "M3", coef_str = paste0(round(estimate, 2), sig)) %>%
+             model = "M3", coef_str = paste0(format_coef(estimate), sig)) %>%
       select(term, model, coef_str)
 
     bind_rows(m1, m2, m3) %>%
@@ -766,19 +786,19 @@ server <- function(input, output, session) {
     m1 <- model_quad_m1 %>%
       filter(outcome == outcome_name) %>%
       mutate(sig = replace_na(sig, ""),
-             model = "M1", coef_str = paste0(round(estimate, 2), sig)) %>%
+             model = "M1", coef_str = paste0(format_coef(estimate), sig)) %>%
       select(term, model, coef_str)
 
     m2 <- model_quad_m2 %>%
       filter(outcome == outcome_name) %>%
       mutate(sig = replace_na(sig, ""),
-             model = "M2", coef_str = paste0(round(estimate, 2), sig)) %>%
+             model = "M2", coef_str = paste0(format_coef(estimate), sig)) %>%
       select(term, model, coef_str)
 
     m3 <- model_quad_m3 %>%
       filter(outcome == outcome_name) %>%
       mutate(sig = replace_na(sig, ""),
-             model = "M3", coef_str = paste0(round(estimate, 2), sig)) %>%
+             model = "M3", coef_str = paste0(format_coef(estimate), sig)) %>%
       select(term, model, coef_str)
 
     bind_rows(m1, m2, m3) %>%
@@ -806,19 +826,19 @@ server <- function(input, output, session) {
     m1 <- model_dummy_m1 %>%
       filter(outcome == outcome_name) %>%
       mutate(sig = replace_na(sig, ""),
-             model = "M1", coef_str = paste0(round(estimate, 2), sig)) %>%
+             model = "M1", coef_str = paste0(format_coef(estimate), sig)) %>%
       select(term, model, coef_str)
 
     m2 <- model_dummy_m2 %>%
       filter(outcome == outcome_name) %>%
       mutate(sig = replace_na(sig, ""),
-             model = "M2", coef_str = paste0(round(estimate, 2), sig)) %>%
+             model = "M2", coef_str = paste0(format_coef(estimate), sig)) %>%
       select(term, model, coef_str)
 
     m3 <- model_dummy_m3 %>%
       filter(outcome == outcome_name) %>%
       mutate(sig = replace_na(sig, ""),
-             model = "M3", coef_str = paste0(round(estimate, 2), sig)) %>%
+             model = "M3", coef_str = paste0(format_coef(estimate), sig)) %>%
       select(term, model, coef_str)
 
     bind_rows(m1, m2, m3) %>%
