@@ -51,6 +51,9 @@ retention_summary <- load_data("retention_summary.rds")
 attrition_counts <- load_data("attrition_counts.rds")
 model_comparison <- load_data("model_comparison.csv")
 model_results <- load_data("model_results_fully_adjusted.csv")
+model_results_m1 <- load_data("model_results_unadjusted.csv")
+model_results_m2 <- load_data("model_results_sociodemographic.csv")
+model_results_m3 <- load_data("model_results_fully_adjusted.csv")
 predicted_trajectories <- load_data("predicted_trajectories.rds")
 model_quadratic <- load_data("model_quadratic_results.csv")
 model_dummy <- load_data("model_B_results.csv")
@@ -654,114 +657,116 @@ server <- function(input, output, session) {
 
   # --- Helper functions for model tables ---
 
-  # Function to create compact linear hierarchical table (showing M1, M2, M3 side by side)
-  make_linear_table <- function(outcome_name) {
-    if (is.null(model_comparison)) return(NULL)
-
-    model_comparison %>%
-      filter(outcome == outcome_name) %>%
-      mutate(
-        term_clean = case_when(
-          term == "(Intercept)" ~ "Intercept",
-          term == "time" ~ "Time",
-          grepl("Mild.*:time", term) ~ "Mild x Time",
-          grepl("Moderate.*:time", term) ~ "Mod-Sev x Time",
-          grepl("Mild", term) ~ "Mild",
-          grepl("Moderate", term) ~ "Mod-Severe",
-          term == "age_c" ~ "Age (centered)",
-          term == "sex_factorFemale" ~ "Female",
-          grepl("education.*Intermediate", term) ~ "Education: Intermediate",
-          grepl("education.*Higher", term) ~ "Education: Higher",
-          grepl("wealth.*Q2", term) ~ "Wealth: Q2",
-          grepl("wealth.*Q3", term) ~ "Wealth: Q3",
-          grepl("wealth.*Q4", term) ~ "Wealth: Q4",
-          grepl("wealth.*Q5", term) ~ "Wealth: Q5",
-          term == "cesd_total" ~ "Depression (CES-D)",
-          term == "has_diabetes" ~ "Diabetes",
-          term == "has_cvd" ~ "CVD",
-          TRUE ~ term
-        ),
-        model_short = case_when(
-          grepl("Model 1", model) ~ "M1",
-          grepl("Model 2", model) ~ "M2",
-          grepl("Model 3", model) ~ "M3"
-        ),
-        coef = paste0(estimate_ci, sig)
-      ) %>%
-      select(term_clean, model_short, coef) %>%
-      pivot_wider(names_from = model_short, values_from = coef) %>%
-      rename(Term = term_clean)
+  # Helper to clean term names
+  clean_term <- function(term) {
+    case_when(
+      term == "(Intercept)" ~ "Intercept",
+      term == "time" ~ "Time",
+      term == "time_sq" ~ "Time\u00B2",
+      grepl("Mild.*:time_sq", term) ~ "Mild x Time\u00B2",
+      grepl("Moderate.*:time_sq", term) ~ "Mod-Sev x Time\u00B2",
+      grepl("Mild.*:time", term) ~ "Mild x Time",
+      grepl("Moderate.*:time", term) ~ "Mod-Sev x Time",
+      grepl("Mild", term) ~ "Mild",
+      grepl("Moderate", term) ~ "Mod-Severe",
+      term == "age_c" ~ "Age (centered)",
+      term == "sex_factorFemale" ~ "Female",
+      grepl("education.*Intermediate", term) ~ "Educ: Intermediate",
+      grepl("education.*Higher", term) ~ "Educ: Higher",
+      grepl("wealth.*Q2", term) ~ "Wealth: Q2",
+      grepl("wealth.*Q3", term) ~ "Wealth: Q3",
+      grepl("wealth.*Q4", term) ~ "Wealth: Q4",
+      grepl("wealth.*Q5", term) ~ "Wealth: Q5",
+      term == "cesd_total" ~ "Depression",
+      term == "has_diabetes" ~ "Diabetes",
+      term == "has_cvd" ~ "CVD",
+      grepl("wave_factorWave 8$", term) ~ "Wave 8",
+      grepl("wave_factorWave 9$", term) ~ "Wave 9",
+      grepl("wave_factorWave 10$", term) ~ "Wave 10",
+      grepl("wave_factorWave 11$", term) ~ "Wave 11",
+      grepl("Mild.*:wave_factorWave 8", term) ~ "Mild x W8",
+      grepl("Mild.*:wave_factorWave 9", term) ~ "Mild x W9",
+      grepl("Mild.*:wave_factorWave 10", term) ~ "Mild x W10",
+      grepl("Mild.*:wave_factorWave 11", term) ~ "Mild x W11",
+      grepl("Moderate.*:wave_factorWave 8", term) ~ "Mod-Sev x W8",
+      grepl("Moderate.*:wave_factorWave 9", term) ~ "Mod-Sev x W9",
+      grepl("Moderate.*:wave_factorWave 10", term) ~ "Mod-Sev x W10",
+      grepl("Moderate.*:wave_factorWave 11", term) ~ "Mod-Sev x W11",
+      TRUE ~ term
+    )
   }
 
-  # Function to create compact quadratic table
+  # Function to create hierarchical linear table (M1, M2, M3 with all coefficients)
+  make_linear_table <- function(outcome_name) {
+    if (is.null(model_results_m1) || is.null(model_results_m2) || is.null(model_results_m3)) return(NULL)
+
+    # Combine all three models
+    m1 <- model_results_m1 %>%
+      filter(outcome == outcome_name) %>%
+      mutate(model = "M1", coef_str = paste0(round(estimate, 2), sig)) %>%
+      select(term, model, coef_str)
+
+    m2 <- model_results_m2 %>%
+      filter(outcome == outcome_name) %>%
+      mutate(model = "M2", coef_str = paste0(round(estimate, 2), sig)) %>%
+      select(term, model, coef_str)
+
+    m3 <- model_results_m3 %>%
+      filter(outcome == outcome_name) %>%
+      mutate(model = "M3", coef_str = paste0(round(estimate, 2), sig)) %>%
+      select(term, model, coef_str)
+
+    bind_rows(m1, m2, m3) %>%
+      mutate(Term = clean_term(term)) %>%
+      select(Term, model, coef_str) %>%
+      pivot_wider(names_from = model, values_from = coef_str) %>%
+      # Order terms logically
+      mutate(order = case_when(
+        Term == "Intercept" ~ 1,
+        Term == "Time" ~ 2,
+        Term == "Mild" ~ 3,
+        Term == "Mod-Severe" ~ 4,
+        Term == "Mild x Time" ~ 5,
+        Term == "Mod-Sev x Time" ~ 6,
+        Term == "Age (centered)" ~ 7,
+        Term == "Female" ~ 8,
+        grepl("Educ", Term) ~ 9,
+        grepl("Wealth", Term) ~ 10,
+        Term == "Depression" ~ 11,
+        Term == "Diabetes" ~ 12,
+        Term == "CVD" ~ 13,
+        TRUE ~ 20
+      )) %>%
+      arrange(order) %>%
+      select(-order)
+  }
+
+  # Function to create quadratic table
   make_quadratic_table <- function(outcome_name) {
     if (is.null(model_quadratic)) return(NULL)
 
     model_quadratic %>%
       filter(outcome == outcome_name) %>%
       mutate(
-        Term = case_when(
-          term == "(Intercept)" ~ "Intercept",
-          term == "time" ~ "Time",
-          term == "time_sq" ~ "Time\u00B2",
-          grepl("Mild.*:time_sq", term) ~ "Mild x Time\u00B2",
-          grepl("Moderate.*:time_sq", term) ~ "Mod-Sev x Time\u00B2",
-          grepl("Mild.*:time$", term) ~ "Mild x Time",
-          grepl("Moderate.*:time$", term) ~ "Mod-Sev x Time",
-          grepl("Mild", term) ~ "Mild",
-          grepl("Moderate", term) ~ "Mod-Severe",
-          term == "age_c" ~ "Age (centered)",
-          term == "sex_factorFemale" ~ "Female",
-          grepl("education.*Intermediate", term) ~ "Education: Intermediate",
-          grepl("education.*Higher", term) ~ "Education: Higher",
-          grepl("wealth.*Q2", term) ~ "Wealth: Q2",
-          grepl("wealth.*Q3", term) ~ "Wealth: Q3",
-          grepl("wealth.*Q4", term) ~ "Wealth: Q4",
-          grepl("wealth.*Q5", term) ~ "Wealth: Q5",
-          term == "cesd_total" ~ "Depression (CES-D)",
-          term == "has_diabetes" ~ "Diabetes",
-          term == "has_cvd" ~ "CVD",
-          TRUE ~ term
-        ),
-        Coef = round(estimate, 3),
-        SE = round(std.error, 3),
+        Term = clean_term(term),
+        Coef = round(estimate, 2),
         Sig = sig
       ) %>%
-      select(Term, Coef, SE, Sig)
+      select(Term, Coef, Sig)
   }
 
-  # Function to create compact dummy table
+  # Function to create dummy table
   make_dummy_table <- function(outcome_name) {
     if (is.null(model_dummy)) return(NULL)
 
     model_dummy %>%
       filter(outcome == outcome_name) %>%
       mutate(
-        Term = case_when(
-          term == "(Intercept)" ~ "Intercept",
-          grepl("wave_factorWave 8$", term) ~ "Wave 8",
-          grepl("wave_factorWave 9$", term) ~ "Wave 9",
-          grepl("wave_factorWave 10$", term) ~ "Wave 10",
-          grepl("wave_factorWave 11$", term) ~ "Wave 11",
-          grepl("Mild.*:wave_factorWave 8", term) ~ "Mild x W8",
-          grepl("Mild.*:wave_factorWave 9", term) ~ "Mild x W9",
-          grepl("Mild.*:wave_factorWave 10", term) ~ "Mild x W10",
-          grepl("Mild.*:wave_factorWave 11", term) ~ "Mild x W11",
-          grepl("Moderate.*:wave_factorWave 8", term) ~ "Mod-Sev x W8",
-          grepl("Moderate.*:wave_factorWave 9", term) ~ "Mod-Sev x W9",
-          grepl("Moderate.*:wave_factorWave 10", term) ~ "Mod-Sev x W10",
-          grepl("Moderate.*:wave_factorWave 11", term) ~ "Mod-Sev x W11",
-          grepl("Mild", term) ~ "Mild",
-          grepl("Moderate", term) ~ "Mod-Severe",
-          term == "age_c" ~ "Age (centered)",
-          term == "sex_factorFemale" ~ "Female",
-          TRUE ~ term
-        ),
-        Coef = round(estimate, 3),
-        SE = round(std.error, 3),
+        Term = clean_term(term),
+        Coef = round(estimate, 2),
         Sig = sig
       ) %>%
-      select(Term, Coef, SE, Sig)
+      select(Term, Coef, Sig)
   }
 
   # --- Verbal Fluency tables ---
