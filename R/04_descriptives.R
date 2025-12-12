@@ -32,13 +32,6 @@
 
 library(tidyverse)
 
-# gtsummary: Creates beautiful publication-ready tables
-# It automatically calculates means, SDs, counts, percentages
-library(gtsummary)
-
-# kableExtra: For formatting tables (optional, used by gtsummary)
-library(kableExtra)
-
 # -----------------------------------------------------------------------------
 # STEP 2: Load the analysis data
 # -----------------------------------------------------------------------------
@@ -74,59 +67,35 @@ table1_vars <- baseline %>%
     age, sex_label, age_group,  # Demographics
     # Cognitive outcomes at baseline
     cf_animals, cf_delayed_recall, cf_imm_recall_total,
-    cf_serial7_total, cf_memory_composite
+    cf_memory_composite
   )
 
-# Create Table 1 using gtsummary's tbl_summary()
-# This is a powerful function that automatically:
-# - Calculates means & SDs for continuous variables
-# - Calculates counts & percentages for categorical variables
-table1 <- table1_vars %>%
-  tbl_summary(
-    # Group by hearing acuity (creates columns for each group)
-    by = hearing_acuity,
+# Create Table 1 manually (avoiding gtsummary version issues)
+# Calculate summary statistics by hearing group
 
-    # How to display statistics:
-    # {mean} ({sd}) for continuous variables
-    # {n} ({p}%) for categorical variables
-    statistic = list(
-      all_continuous() ~ "{mean} ({sd})",
-      all_categorical() ~ "{n} ({p}%)"
-    ),
+table1_summary <- baseline %>%
+  group_by(hearing_acuity) %>%
+  summarise(
+    N = n(),
+    `Age (mean)` = round(mean(age, na.rm = TRUE), 1),
+    `Age (SD)` = round(sd(age, na.rm = TRUE), 1),
+    `Female (%)` = round(100 * mean(sex_label == "Female", na.rm = TRUE), 1),
+    `Verbal Fluency (mean)` = round(mean(cf_animals, na.rm = TRUE), 1),
+    `Verbal Fluency (SD)` = round(sd(cf_animals, na.rm = TRUE), 1),
+    `Delayed Recall (mean)` = round(mean(cf_delayed_recall, na.rm = TRUE), 1),
+    `Delayed Recall (SD)` = round(sd(cf_delayed_recall, na.rm = TRUE), 1),
+    `Memory Composite (mean)` = round(mean(cf_memory_composite, na.rm = TRUE), 1),
+    `Memory Composite (SD)` = round(sd(cf_memory_composite, na.rm = TRUE), 1),
+    .groups = "drop"
+  )
 
-    # Human-readable labels for variables
-    label = list(
-      age ~ "Age (years)",
-      sex_label ~ "Sex",
-      age_group ~ "Age group",
-      cf_animals ~ "Verbal fluency (animals)",
-      cf_delayed_recall ~ "Word-list delayed recall",
-      cf_imm_recall_total ~ "Word-list immediate recall",
-      cf_serial7_total ~ "Serial 7s (correct)",
-      cf_memory_composite ~ "Memory composite"
-    ),
+# Print Table 1 summary
+cat("\nBaseline Characteristics by Hearing Group:\n")
+print(table1_summary)
 
-    # Show missing data if any
-    missing = "ifany",
-    missing_text = "Missing"
-  ) %>%
-  # Add an "Overall" column
-  add_overall() %>%
-  # Add p-values comparing groups
-  add_p() %>%
-  # Customize headers
-  modify_header(label = "**Characteristic**") %>%
-  modify_spanning_header(c("stat_1", "stat_2", "stat_3") ~ "**Hearing Acuity**")
-
-# Print Table 1 to console
-print(table1)
-
-# Save Table 1 as HTML (you can open this in a web browser)
-table1 %>%
-  as_gt() %>%
-  gt::gtsave("output/tables/table1_baseline_characteristics.html")
-
-cat("\nTable 1 saved to: output/tables/table1_baseline_characteristics.html\n")
+# Save as CSV
+write_csv(table1_summary, "output/tables/table1_baseline_characteristics.csv")
+cat("\nTable 1 saved to: output/tables/table1_baseline_characteristics.csv\n")
 
 # -----------------------------------------------------------------------------
 # STEP 5: Calculate cognitive scores by wave and hearing group
@@ -349,37 +318,28 @@ baseline_with_completion <- baseline %>%
     by = "idauniq"
   )
 
-# Create table comparing completers vs non-completers
-attrition_table <- baseline_with_completion %>%
-  select(
-    completer,            # Grouping variable
-    age, sex_label, hearing_acuity,  # Characteristics
-    cf_animals, cf_delayed_recall    # Baseline cognition
-  ) %>%
-  tbl_summary(
-    by = completer,
-    statistic = list(
-      all_continuous() ~ "{mean} ({sd})",
-      all_categorical() ~ "{n} ({p}%)"
-    ),
-    label = list(
-      age ~ "Age (years)",
-      sex_label ~ "Sex",
-      hearing_acuity ~ "Hearing acuity",
-      cf_animals ~ "Verbal fluency",
-      cf_delayed_recall ~ "Delayed recall"
-    )
-  ) %>%
-  add_p()
+# Create table comparing completers vs non-completers (simplified)
+attrition_summary_table <- baseline_with_completion %>%
+  group_by(completer) %>%
+  summarise(
+    N = n(),
+    `Age (mean)` = round(mean(age, na.rm = TRUE), 1),
+    `Age (SD)` = round(sd(age, na.rm = TRUE), 1),
+    `Female (%)` = round(100 * mean(sex_label == "Female", na.rm = TRUE), 1),
+    `Good Hearing (%)` = round(100 * mean(hearing_acuity == "Good (6 tones)", na.rm = TRUE), 1),
+    `Mild Hearing Loss (%)` = round(100 * mean(hearing_acuity == "Mild difficulty (3-5 tones)", na.rm = TRUE), 1),
+    `Mod-Severe Hearing Loss (%)` = round(100 * mean(hearing_acuity == "Moderate-severe (0-2 tones)", na.rm = TRUE), 1),
+    `Verbal Fluency (mean)` = round(mean(cf_animals, na.rm = TRUE), 1),
+    `Delayed Recall (mean)` = round(mean(cf_delayed_recall, na.rm = TRUE), 1),
+    .groups = "drop"
+  )
 
-print(attrition_table)
+cat("\nComparison of Completers vs Non-completers:\n")
+print(attrition_summary_table)
 
-# Save attrition table
-attrition_table %>%
-  as_gt() %>%
-  gt::gtsave("output/tables/table_attrition.html")
-
-cat("\nAttrition table saved to: output/tables/table_attrition.html\n")
+# Save attrition table as CSV
+write_csv(attrition_summary_table, "output/tables/table_attrition.csv")
+cat("\nAttrition table saved to: output/tables/table_attrition.csv\n")
 
 # INTERPRETATION:
 # If completers are younger, healthier, or have better cognition than

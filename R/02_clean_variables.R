@@ -426,17 +426,20 @@ wave7_comorbidities <- elsa_clean$wave7 %>%
       TRUE ~ 0
     ),
 
-    # Comorbidity count (0-8)
-    comorbidity_count = rowSums(
-      select(., has_hypertension, has_angina, has_heart_attack, has_heart_failure,
-             has_arrhythmia, has_diabetes, has_stroke, has_high_cholesterol),
-      na.rm = TRUE
-    ),
-
     # Self-rated health (1=excellent to 5=poor)
     self_rated_health = factor(hehelf,
                                levels = 1:5,
                                labels = c("Excellent", "Very good", "Good", "Fair", "Poor"))
+  )
+
+# Calculate comorbidity count separately (rowSums with across works better)
+wave7_comorbidities <- wave7_comorbidities %>%
+  mutate(
+    comorbidity_count = rowSums(
+      across(c(has_hypertension, has_angina, has_heart_attack, has_heart_failure,
+               has_arrhythmia, has_diabetes, has_stroke, has_high_cholesterol)),
+      na.rm = TRUE
+    )
   ) %>%
   select(idauniq, has_hypertension, has_diabetes, has_cvd, has_stroke,
          comorbidity_count, self_rated_health)

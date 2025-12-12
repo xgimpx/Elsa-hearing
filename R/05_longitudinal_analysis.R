@@ -100,10 +100,12 @@ analysis_df <- analytic_sample %>%
     self_rated_health = relevel(factor(self_rated_health),
                                 ref = "Excellent"),
 
-    # Social engagement as factor
+    # Social engagement as factor (may have missing data)
     social_engagement_cat = relevel(factor(social_engagement_cat),
                                     ref = "None")
-  )
+  ) %>%
+  # Drop unused factor levels to avoid contrast issues
+  mutate(across(where(is.factor), droplevels))
 
 cat("Analysis sample:\n")
 cat(sprintf("  Observations: %d\n", nrow(analysis_df)))
@@ -138,19 +140,19 @@ baseline_for_weights <- analysis_df %>%
 
 # Fit logistic regression to predict completion
 # Using baseline characteristics that might predict dropout
+# Use simpler model to avoid too much missing data
 attrition_model <- glm(
-  completer ~ age_c + sex_factor + hearing_acuity +
-    education_3cat + wealth_quintile + cesd_total +
-    has_diabetes + has_cvd + comorbidity_count,
+  completer ~ age_c + sex_factor + hearing_acuity,
   data = baseline_for_weights,
   family = binomial()
 )
 
 # Calculate predicted probabilities and weights
+# Use newdata to ensure predictions align with full dataset
 baseline_for_weights <- baseline_for_weights %>%
   mutate(
     # Predicted probability of completion
-    p_complete = predict(attrition_model, type = "response"),
+    p_complete = predict(attrition_model, newdata = ., type = "response"),
 
     # Stabilized inverse probability weight
     # Stabilized weights have better properties than raw 1/p weights
@@ -202,9 +204,9 @@ model1_fixed <- "hearing_acuity * time + age_c + sex_factor"
 model2_fixed <- paste0(model1_fixed, " + education_3cat + wealth_quintile")
 
 # Model 3: + Health confounders (FULLY ADJUSTED)
+# Note: Removed social_engagement_cat due to missing data issues
 model3_fixed <- paste0(model2_fixed,
-                       " + cesd_total + has_diabetes + has_cvd + ",
-                       "social_engagement_cat")
+                       " + cesd_total + has_diabetes + has_cvd")
 
 # -----------------------------------------------------------------------------
 # Function to fit hierarchical models

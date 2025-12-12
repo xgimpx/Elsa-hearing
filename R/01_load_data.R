@@ -340,7 +340,7 @@ message(paste("Wave 7 financial:", nrow(fin_w7), "rows"))
 
 # Wave 8 financial data
 fin_w8 <- fread(
-  paste0(elsa_path, "wave_8_elsa_financial_dvs_eul_v1.tab"),
+  paste0(elsa_path, "wave_8_financial_derived_variables.tab"),
   sep = "\t", header = TRUE,
   select = financial_vars
 ) %>% as_tibble() %>%
@@ -348,8 +348,28 @@ fin_w8 <- fread(
 
 message(paste("Wave 8 financial:", nrow(fin_w8), "rows"))
 
+# Wave 9 financial data
+fin_w9 <- fread(
+  paste0(elsa_path, "wave_9_financial_derived_variables.tab"),
+  sep = "\t", header = TRUE,
+  select = financial_vars
+) %>% as_tibble() %>%
+  mutate(wave = 9)
+
+message(paste("Wave 9 financial:", nrow(fin_w9), "rows"))
+
+# Wave 10 financial data
+fin_w10 <- fread(
+  paste0(elsa_path, "wave_10_financial_derived_variables.tab"),
+  sep = "\t", header = TRUE,
+  select = financial_vars
+) %>% as_tibble() %>%
+  mutate(wave = 10)
+
+message(paste("Wave 10 financial:", nrow(fin_w10), "rows"))
+
 # Combine financial data
-financial_derived <- bind_rows(fin_w7, fin_w8)
+financial_derived <- bind_rows(fin_w7, fin_w8, fin_w9, fin_w10)
 
 # -----------------------------------------------------------------------------
 # STEP 8: Load IFS Derived Variables (Harmonized Education)
@@ -457,6 +477,8 @@ cat(sprintf("  2023 Respondent archive: %d participants\n", nrow(hcap_respondent
 cat("\nDerived Data:\n")
 cat(sprintf("  Financial (Wave 7): %d participants\n", nrow(fin_w7)))
 cat(sprintf("  Financial (Wave 8): %d participants\n", nrow(fin_w8)))
+cat(sprintf("  Financial (Wave 9): %d participants\n", nrow(fin_w9)))
+cat(sprintf("  Financial (Wave 10): %d participants\n", nrow(fin_w10)))
 cat(sprintf("  IFS derived (Wave 7): %d participants\n", nrow(ifs_w7)))
 cat(sprintf("  Nurse data (Wave 8): %d participants\n", nrow(nurse_w8)))
 

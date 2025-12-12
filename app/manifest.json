@@ -3440,6 +3440,33 @@
     },
     "data/.gitkeep": {
       "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "data/attrition_counts.rds": {
+      "checksum": "397c9250cda4d66dc44579bf60f2c39a"
+    },
+    "data/model_comparison.csv": {
+      "checksum": "59473115065c36f566d6ffad207bb4f4"
+    },
+    "data/model_results_fully_adjusted.csv": {
+      "checksum": "26a168063b298e3a3a707c39c833f2aa"
+    },
+    "data/model_results_sociodemographic.csv": {
+      "checksum": "ec989cb423e8c99efd84acf5639fb263"
+    },
+    "data/model_results_unadjusted.csv": {
+      "checksum": "0dc3fec44a90f7e09a07b3de804ec4bf"
+    },
+    "data/retention_summary.rds": {
+      "checksum": "67430a04ebe29f9a72c3b04edc89ba82"
+    },
+    "data/sample_summary.rds": {
+      "checksum": "25cb3ccf23651023181d839747e3a196"
+    },
+    "data/table1_summary.rds": {
+      "checksum": "6915884cecb01b46b7e0c83734ea684f"
+    },
+    "data/trajectory_means.rds": {
+      "checksum": "990d33961568b72173b9cbeced1f3912"
     }
   },
   "users": null
