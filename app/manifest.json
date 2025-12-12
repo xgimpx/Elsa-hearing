@@ -3436,7 +3436,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "bc6935c589cbb47fea7430ee85a1b46e"
+      "checksum": "0865b87f7c982c2efbd3d571e13565ea"
     },
     "data/.gitkeep": {
       "checksum": "d41d8cd98f00b204e9800998ecf8427e"
@@ -3444,14 +3444,32 @@
     "data/attrition_counts.rds": {
       "checksum": "397c9250cda4d66dc44579bf60f2c39a"
     },
+    "data/model_B_m1_results.csv": {
+      "checksum": "b8ba3854de5ff1df3d050095da95e6f3"
+    },
+    "data/model_B_m2_results.csv": {
+      "checksum": "2cb59c5cbbe86b26eb29831dbbc83912"
+    },
+    "data/model_B_m3_results.csv": {
+      "checksum": "b1d75469b0aaaf4fdc38bca823ffdd06"
+    },
     "data/model_B_results.csv": {
-      "checksum": "cd2b1a5891026aa2d5619d332ba34977"
+      "checksum": "b1d75469b0aaaf4fdc38bca823ffdd06"
     },
     "data/model_comparison.csv": {
       "checksum": "3ca0c352295e7149ccd89fc26eeb25cc"
     },
+    "data/model_quadratic_m1_results.csv": {
+      "checksum": "ec90da534fed2a4210faaa70155df48f"
+    },
+    "data/model_quadratic_m2_results.csv": {
+      "checksum": "4cdb1e240cc1931762bb166076225c20"
+    },
+    "data/model_quadratic_m3_results.csv": {
+      "checksum": "4f71ce32c08a909b0292cf42f471cfda"
+    },
     "data/model_quadratic_results.csv": {
-      "checksum": "17f6035656a7b7e17271e76cb0aeb7e2"
+      "checksum": "4f71ce32c08a909b0292cf42f471cfda"
     },
     "data/model_results_fully_adjusted.csv": {
       "checksum": "83801ff2a49e10806abaeb1ada4b2918"

@@ -51,9 +51,19 @@ retention_summary <- load_data("retention_summary.rds")
 attrition_counts <- load_data("attrition_counts.rds")
 model_comparison <- load_data("model_comparison.csv")
 model_results <- load_data("model_results_fully_adjusted.csv")
+# Linear hierarchical
 model_results_m1 <- load_data("model_results_unadjusted.csv")
 model_results_m2 <- load_data("model_results_sociodemographic.csv")
 model_results_m3 <- load_data("model_results_fully_adjusted.csv")
+# Quadratic hierarchical
+model_quad_m1 <- load_data("model_quadratic_m1_results.csv")
+model_quad_m2 <- load_data("model_quadratic_m2_results.csv")
+model_quad_m3 <- load_data("model_quadratic_m3_results.csv")
+# Dummy hierarchical
+model_dummy_m1 <- load_data("model_B_m1_results.csv")
+model_dummy_m2 <- load_data("model_B_m2_results.csv")
+model_dummy_m3 <- load_data("model_B_m3_results.csv")
+# For predictions
 predicted_trajectories <- load_data("predicted_trajectories.rds")
 model_quadratic <- load_data("model_quadratic_results.csv")
 model_dummy <- load_data("model_B_results.csv")
@@ -741,32 +751,78 @@ server <- function(input, output, session) {
       select(-order)
   }
 
-  # Function to create quadratic table
+  # Function to create hierarchical quadratic table (M1, M2, M3)
   make_quadratic_table <- function(outcome_name) {
-    if (is.null(model_quadratic)) return(NULL)
+    if (is.null(model_quad_m1) || is.null(model_quad_m2) || is.null(model_quad_m3)) return(NULL)
 
-    model_quadratic %>%
+    m1 <- model_quad_m1 %>%
       filter(outcome == outcome_name) %>%
-      mutate(
-        Term = clean_term(term),
-        Coef = round(estimate, 2),
-        Sig = sig
-      ) %>%
-      select(Term, Coef, Sig)
+      mutate(model = "M1", coef_str = paste0(round(estimate, 2), sig)) %>%
+      select(term, model, coef_str)
+
+    m2 <- model_quad_m2 %>%
+      filter(outcome == outcome_name) %>%
+      mutate(model = "M2", coef_str = paste0(round(estimate, 2), sig)) %>%
+      select(term, model, coef_str)
+
+    m3 <- model_quad_m3 %>%
+      filter(outcome == outcome_name) %>%
+      mutate(model = "M3", coef_str = paste0(round(estimate, 2), sig)) %>%
+      select(term, model, coef_str)
+
+    bind_rows(m1, m2, m3) %>%
+      mutate(Term = clean_term(term)) %>%
+      select(Term, model, coef_str) %>%
+      pivot_wider(names_from = model, values_from = coef_str) %>%
+      mutate(order = case_when(
+        Term == "Intercept" ~ 1, Term == "Time" ~ 2, Term == "Time\u00B2" ~ 3,
+        Term == "Mild" ~ 4, Term == "Mod-Severe" ~ 5,
+        Term == "Mild x Time" ~ 6, Term == "Mod-Sev x Time" ~ 7,
+        Term == "Mild x Time\u00B2" ~ 8, Term == "Mod-Sev x Time\u00B2" ~ 9,
+        Term == "Age (centered)" ~ 10, Term == "Female" ~ 11,
+        grepl("Educ", Term) ~ 12, grepl("Wealth", Term) ~ 13,
+        Term == "Depression" ~ 14, Term == "Diabetes" ~ 15, Term == "CVD" ~ 16,
+        TRUE ~ 20
+      )) %>%
+      arrange(order) %>%
+      select(-order)
   }
 
-  # Function to create dummy table
+  # Function to create hierarchical dummy table (M1, M2, M3)
   make_dummy_table <- function(outcome_name) {
-    if (is.null(model_dummy)) return(NULL)
+    if (is.null(model_dummy_m1) || is.null(model_dummy_m2) || is.null(model_dummy_m3)) return(NULL)
 
-    model_dummy %>%
+    m1 <- model_dummy_m1 %>%
       filter(outcome == outcome_name) %>%
-      mutate(
-        Term = clean_term(term),
-        Coef = round(estimate, 2),
-        Sig = sig
-      ) %>%
-      select(Term, Coef, Sig)
+      mutate(model = "M1", coef_str = paste0(round(estimate, 2), sig)) %>%
+      select(term, model, coef_str)
+
+    m2 <- model_dummy_m2 %>%
+      filter(outcome == outcome_name) %>%
+      mutate(model = "M2", coef_str = paste0(round(estimate, 2), sig)) %>%
+      select(term, model, coef_str)
+
+    m3 <- model_dummy_m3 %>%
+      filter(outcome == outcome_name) %>%
+      mutate(model = "M3", coef_str = paste0(round(estimate, 2), sig)) %>%
+      select(term, model, coef_str)
+
+    bind_rows(m1, m2, m3) %>%
+      mutate(Term = clean_term(term)) %>%
+      select(Term, model, coef_str) %>%
+      pivot_wider(names_from = model, values_from = coef_str) %>%
+      mutate(order = case_when(
+        Term == "Intercept" ~ 1,
+        Term == "Mild" ~ 2, Term == "Mod-Severe" ~ 3,
+        grepl("^Wave", Term) ~ 4,
+        grepl("Mild x W", Term) ~ 5, grepl("Mod-Sev x W", Term) ~ 6,
+        Term == "Age (centered)" ~ 10, Term == "Female" ~ 11,
+        grepl("Educ", Term) ~ 12, grepl("Wealth", Term) ~ 13,
+        Term == "Depression" ~ 14, Term == "Diabetes" ~ 15, Term == "CVD" ~ 16,
+        TRUE ~ 20
+      )) %>%
+      arrange(order) %>%
+      select(-order)
   }
 
   # --- Verbal Fluency tables ---

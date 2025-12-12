@@ -412,86 +412,81 @@ message("\n========== MODEL B: Dummy-Coded Time ==========\n")
 # Function to fit Model B
 # -----------------------------------------------------------------------------
 
-fit_model_B <- function(outcome_var, data) {
+# Hierarchical Model B functions (Dummy/Wave indicators)
+fit_model_B_m1 <- function(outcome_var, data) {
+  formula_str <- paste0(outcome_var, " ~ hearing_acuity * wave_factor + age_c + sex_factor + (1 | idauniq)")
+  lmer(as.formula(formula_str), data = data, control = lmerControl(optimizer = "bobyqa"))
+}
 
-  formula_str <- paste0(
-    outcome_var,
-    " ~ hearing_acuity * wave_factor + ",
-    "age_c + sex_factor + (1 | idauniq)"
-  )
+fit_model_B_m2 <- function(outcome_var, data) {
+  formula_str <- paste0(outcome_var, " ~ hearing_acuity * wave_factor + age_c + sex_factor + education_3cat + wealth_quintile + (1 | idauniq)")
+  lmer(as.formula(formula_str), data = data, control = lmerControl(optimizer = "bobyqa"))
+}
 
-  model <- lmer(
-    as.formula(formula_str),
-    data = data,
-    control = lmerControl(optimizer = "bobyqa")
-  )
-
-  return(model)
+fit_model_B_m3 <- function(outcome_var, data) {
+  formula_str <- paste0(outcome_var, " ~ hearing_acuity * wave_factor + age_c + sex_factor + education_3cat + wealth_quintile + cesd_total + has_diabetes + has_cvd + (1 | idauniq)")
+  lmer(as.formula(formula_str), data = data, control = lmerControl(optimizer = "bobyqa"))
 }
 
 # -----------------------------------------------------------------------------
-# Fit Model B for each cognitive outcome
+# Fit Hierarchical Model B for each cognitive outcome
 # -----------------------------------------------------------------------------
 
-message("Fitting Model B: Verbal Fluency (Animals)...")
-model_B_animals <- fit_model_B("cf_animals", analysis_df)
+outcomes_B <- c("cf_animals", "cf_delayed_recall", "cf_imm_recall_total", "cf_serial7_total")
+outcome_names_B <- c("Verbal Fluency", "Delayed Recall", "Immediate Recall", "Serial 7s")
 
-message("Fitting Model B: Delayed Recall...")
-model_B_delayed <- fit_model_B("cf_delayed_recall", analysis_df)
+model_B_results_m1 <- list()
+model_B_results_m2 <- list()
+model_B_results_m3 <- list()
 
-message("Fitting Model B: Immediate Recall Total...")
-model_B_imm <- fit_model_B("cf_imm_recall_total", analysis_df)
+for (i in seq_along(outcomes_B)) {
+  message("Fitting Model B (M1/M2/M3): ", outcome_names_B[i], "...")
 
-message("Fitting Model B: Serial 7s...")
-model_B_serial7 <- fit_model_B("cf_serial7_total", analysis_df)
+  m1 <- fit_model_B_m1(outcomes_B[i], analysis_df)
+  m2 <- fit_model_B_m2(outcomes_B[i], analysis_df)
+  m3 <- fit_model_B_m3(outcomes_B[i], analysis_df)
 
-# -----------------------------------------------------------------------------
-# Print Model B results
-# -----------------------------------------------------------------------------
+  model_B_results_m1[[i]] <- tidy(m1, effects = "fixed") %>% mutate(outcome = outcome_names_B[i])
+  model_B_results_m2[[i]] <- tidy(m2, effects = "fixed") %>% mutate(outcome = outcome_names_B[i])
+  model_B_results_m3[[i]] <- tidy(m3, effects = "fixed") %>% mutate(outcome = outcome_names_B[i])
+}
 
-cat("\n", rep("=", 60), "\n")
-cat("Model B: Verbal Fluency (Animals)\n")
-cat(rep("=", 60), "\n")
-print(summary(model_B_animals))
+# Keep a reference model for predictions
+model_B_animals <- fit_model_B_m1("cf_animals", analysis_df)
+model_B_delayed <- fit_model_B_m1("cf_delayed_recall", analysis_df)
+model_B_imm <- fit_model_B_m1("cf_imm_recall_total", analysis_df)
+model_B_serial7 <- fit_model_B_m1("cf_serial7_total", analysis_df)
 
-cat("\n", rep("=", 60), "\n")
-cat("Model B: Delayed Recall\n")
-cat(rep("=", 60), "\n")
-print(summary(model_B_delayed))
+# Format and save results
+format_results <- function(results_list) {
+  bind_rows(results_list) %>%
+    mutate(
+      estimate = round(estimate, 3),
+      std.error = round(std.error, 3),
+      p.value = round(p.value, 4),
+      sig = case_when(
+        p.value < 0.001 ~ "***",
+        p.value < 0.01 ~ "**",
+        p.value < 0.05 ~ "*",
+        p.value < 0.1 ~ ".",
+        TRUE ~ ""
+      )
+    ) %>%
+    select(outcome, term, estimate, std.error, p.value, sig)
+}
 
-# -----------------------------------------------------------------------------
-# Extract and format all Model B results
-# -----------------------------------------------------------------------------
+model_B_m1_table <- format_results(model_B_results_m1)
+model_B_m2_table <- format_results(model_B_results_m2)
+model_B_m3_table <- format_results(model_B_results_m3)
 
-model_B_results <- bind_rows(
-  tidy(model_B_animals, effects = "fixed") %>% mutate(outcome = "Verbal Fluency"),
-  tidy(model_B_delayed, effects = "fixed") %>% mutate(outcome = "Delayed Recall"),
-  tidy(model_B_imm, effects = "fixed") %>% mutate(outcome = "Immediate Recall"),
-  tidy(model_B_serial7, effects = "fixed") %>% mutate(outcome = "Serial 7s")
-)
+write_csv(model_B_m1_table, "output/tables/model_B_m1_results.csv")
+write_csv(model_B_m2_table, "output/tables/model_B_m2_results.csv")
+write_csv(model_B_m3_table, "output/tables/model_B_m3_results.csv")
 
-model_B_table <- model_B_results %>%
-  mutate(
-    estimate = round(estimate, 3),
-    std.error = round(std.error, 3),
-    statistic = round(statistic, 2),
-    p.value = round(p.value, 4),
-    sig = case_when(
-      p.value < 0.001 ~ "***",
-      p.value < 0.01 ~ "**",
-      p.value < 0.05 ~ "*",
-      p.value < 0.1 ~ ".",
-      TRUE ~ ""
-    )
-  ) %>%
-  select(outcome, term, estimate, std.error, statistic, p.value, sig)
+# Also save combined for backward compatibility
+write_csv(model_B_m3_table, "output/tables/model_B_results.csv")
 
-cat("\n", rep("=", 60), "\n")
-cat("Model B: Summary of All Outcomes\n")
-cat(rep("=", 60), "\n")
-print(model_B_table, n = 80)
-
-write_csv(model_B_table, "output/tables/model_B_results.csv")
+cat("\nModel B hierarchical results saved.\n")
 
 # =============================================================================
 # MODEL C: QUADRATIC TIME
@@ -506,71 +501,64 @@ message("\n========== MODEL C: Quadratic Time ==========\n")
 #
 # time_sq interaction tests: Do hearing groups show different CURVATURE?
 
-fit_quadratic_model <- function(outcome_var, data) {
-  formula_str <- paste0(
-    outcome_var,
-    " ~ hearing_acuity * (time + time_sq) + ",
-    "age_c + sex_factor + education_3cat + wealth_quintile + ",
-    "cesd_total + has_diabetes + has_cvd + ",
-    "(1 + time | idauniq)"
-  )
-
-  model <- lmer(
-    as.formula(formula_str),
-    data = data,
-    control = lmerControl(optimizer = "bobyqa")
-  )
-  return(model)
+# Hierarchical Quadratic Model functions
+fit_quad_m1 <- function(outcome_var, data) {
+  formula_str <- paste0(outcome_var, " ~ hearing_acuity * (time + time_sq) + age_c + sex_factor + (1 + time | idauniq)")
+  lmer(as.formula(formula_str), data = data, control = lmerControl(optimizer = "bobyqa"))
 }
 
-message("Fitting quadratic models...")
-model_quad_animals <- fit_quadratic_model("cf_animals", analysis_df)
-model_quad_delayed <- fit_quadratic_model("cf_delayed_recall", analysis_df)
-model_quad_imm <- fit_quadratic_model("cf_imm_recall_total", analysis_df)
-model_quad_serial7 <- fit_quadratic_model("cf_serial7_total", analysis_df)
+fit_quad_m2 <- function(outcome_var, data) {
+  formula_str <- paste0(outcome_var, " ~ hearing_acuity * (time + time_sq) + age_c + sex_factor + education_3cat + wealth_quintile + (1 + time | idauniq)")
+  lmer(as.formula(formula_str), data = data, control = lmerControl(optimizer = "bobyqa"))
+}
 
-cat("\n", rep("=", 60), "\n")
-cat("Model C (Quadratic): Verbal Fluency\n")
-cat(rep("=", 60), "\n")
-print(summary(model_quad_animals))
+fit_quad_m3 <- function(outcome_var, data) {
+  formula_str <- paste0(outcome_var, " ~ hearing_acuity * (time + time_sq) + age_c + sex_factor + education_3cat + wealth_quintile + cesd_total + has_diabetes + has_cvd + (1 + time | idauniq)")
+  lmer(as.formula(formula_str), data = data, control = lmerControl(optimizer = "bobyqa"))
+}
 
-cat("\n", rep("=", 60), "\n")
-cat("Model C (Quadratic): Delayed Recall\n")
-cat(rep("=", 60), "\n")
-print(summary(model_quad_delayed))
+# -----------------------------------------------------------------------------
+# Fit Hierarchical Quadratic Models
+# -----------------------------------------------------------------------------
 
-cat("\n", rep("=", 60), "\n")
-cat("Model C (Quadratic): Immediate Recall\n")
-cat(rep("=", 60), "\n")
-print(summary(model_quad_imm))
+outcomes_C <- c("cf_animals", "cf_delayed_recall", "cf_imm_recall_total", "cf_serial7_total")
+outcome_names_C <- c("Verbal Fluency", "Delayed Recall", "Immediate Recall", "Serial 7s")
 
-cat("\n", rep("=", 60), "\n")
-cat("Model C (Quadratic): Serial 7s\n")
-cat(rep("=", 60), "\n")
-print(summary(model_quad_serial7))
+model_C_results_m1 <- list()
+model_C_results_m2 <- list()
+model_C_results_m3 <- list()
 
-# Extract quadratic model results
-model_C_results <- bind_rows(
-  tidy(model_quad_animals, effects = "fixed") %>% mutate(outcome = "Verbal Fluency"),
-  tidy(model_quad_delayed, effects = "fixed") %>% mutate(outcome = "Delayed Recall"),
-  tidy(model_quad_imm, effects = "fixed") %>% mutate(outcome = "Immediate Recall"),
-  tidy(model_quad_serial7, effects = "fixed") %>% mutate(outcome = "Serial 7s")
-) %>%
-  mutate(
-    estimate = round(estimate, 4),
-    std.error = round(std.error, 4),
-    p.value = round(p.value, 4),
-    sig = case_when(
-      p.value < 0.001 ~ "***",
-      p.value < 0.01 ~ "**",
-      p.value < 0.05 ~ "*",
-      p.value < 0.1 ~ ".",
-      TRUE ~ ""
-    )
-  ) %>%
-  select(outcome, term, estimate, std.error, p.value, sig)
+for (i in seq_along(outcomes_C)) {
+  message("Fitting Quadratic Model (M1/M2/M3): ", outcome_names_C[i], "...")
 
-write_csv(model_C_results, "output/tables/model_quadratic_results.csv")
+  m1 <- fit_quad_m1(outcomes_C[i], analysis_df)
+  m2 <- fit_quad_m2(outcomes_C[i], analysis_df)
+  m3 <- fit_quad_m3(outcomes_C[i], analysis_df)
+
+  model_C_results_m1[[i]] <- tidy(m1, effects = "fixed") %>% mutate(outcome = outcome_names_C[i])
+  model_C_results_m2[[i]] <- tidy(m2, effects = "fixed") %>% mutate(outcome = outcome_names_C[i])
+  model_C_results_m3[[i]] <- tidy(m3, effects = "fixed") %>% mutate(outcome = outcome_names_C[i])
+}
+
+# Keep reference models for predictions
+model_quad_animals <- fit_quad_m3("cf_animals", analysis_df)
+model_quad_delayed <- fit_quad_m3("cf_delayed_recall", analysis_df)
+model_quad_imm <- fit_quad_m3("cf_imm_recall_total", analysis_df)
+model_quad_serial7 <- fit_quad_m3("cf_serial7_total", analysis_df)
+
+# Format and save results
+model_C_m1_table <- format_results(model_C_results_m1)
+model_C_m2_table <- format_results(model_C_results_m2)
+model_C_m3_table <- format_results(model_C_results_m3)
+
+write_csv(model_C_m1_table, "output/tables/model_quadratic_m1_results.csv")
+write_csv(model_C_m2_table, "output/tables/model_quadratic_m2_results.csv")
+write_csv(model_C_m3_table, "output/tables/model_quadratic_m3_results.csv")
+
+# Also save combined for backward compatibility
+write_csv(model_C_m3_table, "output/tables/model_quadratic_results.csv")
+
+cat("\nQuadratic model hierarchical results saved.\n")
 
 # =============================================================================
 # GENERATE MODEL-PREDICTED TRAJECTORIES FOR DASHBOARD

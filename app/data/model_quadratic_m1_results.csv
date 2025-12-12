@@ -1,0 +1,45 @@
+outcome,term,estimate,std.error,p.value,sig
+Verbal Fluency,(Intercept),21.261,0.209,0,***
+Verbal Fluency,hearing_acuityMild difficulty (3-5 tones),-0.546,0.262,0.0375,*
+Verbal Fluency,hearing_acuityModerate-severe (0-2 tones),-1.76,0.376,0,***
+Verbal Fluency,time,0.161,0.075,0.0328,*
+Verbal Fluency,time_sq,-0.042,0.01,0,***
+Verbal Fluency,age_c,-0.254,0.011,0,***
+Verbal Fluency,sex_factorFemale,-0.504,0.21,0.0164,*
+Verbal Fluency,hearing_acuityMild difficulty (3-5 tones):time,-0.198,0.115,0.084,.
+Verbal Fluency,hearing_acuityModerate-severe (0-2 tones):time,0.04,0.171,0.8157,
+Verbal Fluency,hearing_acuityMild difficulty (3-5 tones):time_sq,0.017,0.015,0.2327,
+Verbal Fluency,hearing_acuityModerate-severe (0-2 tones):time_sq,-0.012,0.022,0.588,
+Delayed Recall,(Intercept),4.37,0.061,0,***
+Delayed Recall,hearing_acuityMild difficulty (3-5 tones),-0.302,0.078,1e-4,***
+Delayed Recall,hearing_acuityModerate-severe (0-2 tones),-0.562,0.111,0,***
+Delayed Recall,time,-0.093,0.021,0,***
+Delayed Recall,time_sq,0.002,0.003,0.4664,
+Delayed Recall,age_c,-0.088,0.003,0,***
+Delayed Recall,sex_factorFemale,0.312,0.06,0,***
+Delayed Recall,hearing_acuityMild difficulty (3-5 tones):time,0.012,0.032,0.7213,
+Delayed Recall,hearing_acuityModerate-severe (0-2 tones):time,0.027,0.048,0.5712,
+Delayed Recall,hearing_acuityMild difficulty (3-5 tones):time_sq,-0.003,0.004,0.4552,
+Delayed Recall,hearing_acuityModerate-severe (0-2 tones):time_sq,-0.006,0.006,0.3412,
+Immediate Recall,(Intercept),1.005,0.002,0,***
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones),-0.002,0.002,0.4234,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones),0.001,0.003,0.7558,
+Immediate Recall,time,-0,0.001,0.9654,
+Immediate Recall,time_sq,-0,0,0.9841,
+Immediate Recall,age_c,0,0,0.1755,
+Immediate Recall,sex_factorFemale,-0.002,0.001,0.0749,.
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones):time,0.001,0.002,0.5255,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones):time,0.002,0.002,0.3519,
+Immediate Recall,hearing_acuityMild difficulty (3-5 tones):time_sq,-0,0,0.7433,
+Immediate Recall,hearing_acuityModerate-severe (0-2 tones):time_sq,-0,0,0.7639,
+Serial 7s,(Intercept),395.257,1.802,0,***
+Serial 7s,hearing_acuityMild difficulty (3-5 tones),-2.534,2.472,0.3054,
+Serial 7s,hearing_acuityModerate-severe (0-2 tones),-7.718,3.592,0.0317,*
+Serial 7s,time,-1.297,1.083,0.2314,
+Serial 7s,time_sq,0.104,0.137,0.4471,
+Serial 7s,age_c,-0.124,0.079,0.1134,
+Serial 7s,sex_factorFemale,-0.78,1.415,0.5818,
+Serial 7s,hearing_acuityMild difficulty (3-5 tones):time,0.419,1.654,0.8,
+Serial 7s,hearing_acuityModerate-severe (0-2 tones):time,3.172,2.478,0.2006,
+Serial 7s,hearing_acuityMild difficulty (3-5 tones):time_sq,0.049,0.212,0.8161,
+Serial 7s,hearing_acuityModerate-severe (0-2 tones):time_sq,-0.426,0.331,0.1974,

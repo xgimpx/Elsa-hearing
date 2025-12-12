@@ -152,6 +152,7 @@ saveRDS(attrition_counts, "app/data/attrition_counts.rds")
 
 message("Copying model results...")
 
+# Linear hierarchical models
 file.copy("output/tables/model_comparison.csv",
           "app/data/model_comparison.csv", overwrite = TRUE)
 file.copy("output/tables/model_results_fully_adjusted.csv",
@@ -160,10 +161,26 @@ file.copy("output/tables/model_results_unadjusted.csv",
           "app/data/model_results_unadjusted.csv", overwrite = TRUE)
 file.copy("output/tables/model_results_sociodemographic.csv",
           "app/data/model_results_sociodemographic.csv", overwrite = TRUE)
+
+# Quadratic hierarchical models
 file.copy("output/tables/model_quadratic_results.csv",
           "app/data/model_quadratic_results.csv", overwrite = TRUE)
+file.copy("output/tables/model_quadratic_m1_results.csv",
+          "app/data/model_quadratic_m1_results.csv", overwrite = TRUE)
+file.copy("output/tables/model_quadratic_m2_results.csv",
+          "app/data/model_quadratic_m2_results.csv", overwrite = TRUE)
+file.copy("output/tables/model_quadratic_m3_results.csv",
+          "app/data/model_quadratic_m3_results.csv", overwrite = TRUE)
+
+# Dummy hierarchical models
 file.copy("output/tables/model_B_results.csv",
           "app/data/model_B_results.csv", overwrite = TRUE)
+file.copy("output/tables/model_B_m1_results.csv",
+          "app/data/model_B_m1_results.csv", overwrite = TRUE)
+file.copy("output/tables/model_B_m2_results.csv",
+          "app/data/model_B_m2_results.csv", overwrite = TRUE)
+file.copy("output/tables/model_B_m3_results.csv",
+          "app/data/model_B_m3_results.csv", overwrite = TRUE)
 
 # =============================================================================
 # 7. Copy predicted trajectories
