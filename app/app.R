@@ -269,15 +269,15 @@ ui <- page_navbar(
       col_widths = c(4, 4, 4),
       card(
         card_header("Linear Hierarchical (M1 \u2192 M2 \u2192 M3)"),
-        card_body(class = "p-2", DTOutput("model_vf_linear"))
+        card_body(class = "p-2", tableOutput("model_vf_linear"))
       ),
       card(
         card_header("Quadratic Time"),
-        card_body(class = "p-2", DTOutput("model_vf_quad"))
+        card_body(class = "p-2", tableOutput("model_vf_quad"))
       ),
       card(
         card_header("Dummy (Wave)"),
-        card_body(class = "p-2", DTOutput("model_vf_dummy"))
+        card_body(class = "p-2", tableOutput("model_vf_dummy"))
       )
     ),
 
@@ -287,15 +287,15 @@ ui <- page_navbar(
       col_widths = c(4, 4, 4),
       card(
         card_header("Linear Hierarchical (M1 \u2192 M2 \u2192 M3)"),
-        card_body(class = "p-2", DTOutput("model_dr_linear"))
+        card_body(class = "p-2", tableOutput("model_dr_linear"))
       ),
       card(
         card_header("Quadratic Time"),
-        card_body(class = "p-2", DTOutput("model_dr_quad"))
+        card_body(class = "p-2", tableOutput("model_dr_quad"))
       ),
       card(
         card_header("Dummy (Wave)"),
-        card_body(class = "p-2", DTOutput("model_dr_dummy"))
+        card_body(class = "p-2", tableOutput("model_dr_dummy"))
       )
     ),
 
@@ -305,15 +305,15 @@ ui <- page_navbar(
       col_widths = c(4, 4, 4),
       card(
         card_header("Linear Hierarchical (M1 \u2192 M2 \u2192 M3)"),
-        card_body(class = "p-2", DTOutput("model_ir_linear"))
+        card_body(class = "p-2", tableOutput("model_ir_linear"))
       ),
       card(
         card_header("Quadratic Time"),
-        card_body(class = "p-2", DTOutput("model_ir_quad"))
+        card_body(class = "p-2", tableOutput("model_ir_quad"))
       ),
       card(
         card_header("Dummy (Wave)"),
-        card_body(class = "p-2", DTOutput("model_ir_dummy"))
+        card_body(class = "p-2", tableOutput("model_ir_dummy"))
       )
     ),
 
@@ -323,15 +323,15 @@ ui <- page_navbar(
       col_widths = c(4, 4, 4),
       card(
         card_header("Linear Hierarchical (M1 \u2192 M2 \u2192 M3)"),
-        card_body(class = "p-2", DTOutput("model_s7_linear"))
+        card_body(class = "p-2", tableOutput("model_s7_linear"))
       ),
       card(
         card_header("Quadratic Time"),
-        card_body(class = "p-2", DTOutput("model_s7_quad"))
+        card_body(class = "p-2", tableOutput("model_s7_quad"))
       ),
       card(
         card_header("Dummy (Wave)"),
-        card_body(class = "p-2", DTOutput("model_s7_dummy"))
+        card_body(class = "p-2", tableOutput("model_s7_dummy"))
       )
     ),
 
@@ -704,58 +704,57 @@ server <- function(input, output, session) {
       select(Term, Coef, SE, Sig)
   }
 
-  # DT options for compact tables (no scroll, show all rows)
-  dt_options <- list(
-    pageLength = 20,
-    dom = 't',
-    ordering = FALSE,
-    autoWidth = TRUE,
-    paging = FALSE
-  )
-
   # --- Verbal Fluency tables ---
-  output$model_vf_linear <- renderDT({
-    datatable(make_linear_table("Verbal Fluency"), options = dt_options, rownames = FALSE)
-  })
-  output$model_vf_quad <- renderDT({
-    datatable(make_quadratic_table("Verbal Fluency"), options = dt_options, rownames = FALSE)
-  })
-  output$model_vf_dummy <- renderDT({
-    datatable(make_dummy_table("Verbal Fluency"), options = dt_options, rownames = FALSE)
-  })
+  output$model_vf_linear <- renderTable({
+    make_linear_table("Verbal Fluency")
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "s")
+
+  output$model_vf_quad <- renderTable({
+    make_quadratic_table("Verbal Fluency")
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "s")
+
+  output$model_vf_dummy <- renderTable({
+    make_dummy_table("Verbal Fluency")
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "s")
 
   # --- Delayed Recall tables ---
-  output$model_dr_linear <- renderDT({
-    datatable(make_linear_table("Delayed Recall"), options = dt_options, rownames = FALSE)
-  })
-  output$model_dr_quad <- renderDT({
-    datatable(make_quadratic_table("Delayed Recall"), options = dt_options, rownames = FALSE)
-  })
-  output$model_dr_dummy <- renderDT({
-    datatable(make_dummy_table("Delayed Recall"), options = dt_options, rownames = FALSE)
-  })
+  output$model_dr_linear <- renderTable({
+    make_linear_table("Delayed Recall")
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "s")
+
+  output$model_dr_quad <- renderTable({
+    make_quadratic_table("Delayed Recall")
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "s")
+
+  output$model_dr_dummy <- renderTable({
+    make_dummy_table("Delayed Recall")
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "s")
 
   # --- Immediate Recall tables ---
-  output$model_ir_linear <- renderDT({
-    datatable(make_linear_table("Immediate Recall"), options = dt_options, rownames = FALSE)
-  })
-  output$model_ir_quad <- renderDT({
-    datatable(make_quadratic_table("Immediate Recall"), options = dt_options, rownames = FALSE)
-  })
-  output$model_ir_dummy <- renderDT({
-    datatable(make_dummy_table("Immediate Recall"), options = dt_options, rownames = FALSE)
-  })
+  output$model_ir_linear <- renderTable({
+    make_linear_table("Immediate Recall")
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "s")
+
+  output$model_ir_quad <- renderTable({
+    make_quadratic_table("Immediate Recall")
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "s")
+
+  output$model_ir_dummy <- renderTable({
+    make_dummy_table("Immediate Recall")
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "s")
 
   # --- Serial 7s tables ---
-  output$model_s7_linear <- renderDT({
-    datatable(make_linear_table("Serial 7s"), options = dt_options, rownames = FALSE)
-  })
-  output$model_s7_quad <- renderDT({
-    datatable(make_quadratic_table("Serial 7s"), options = dt_options, rownames = FALSE)
-  })
-  output$model_s7_dummy <- renderDT({
-    datatable(make_dummy_table("Serial 7s"), options = dt_options, rownames = FALSE)
-  })
+  output$model_s7_linear <- renderTable({
+    make_linear_table("Serial 7s")
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "s")
+
+  output$model_s7_quad <- renderTable({
+    make_quadratic_table("Serial 7s")
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "s")
+
+  output$model_s7_dummy <- renderTable({
+    make_dummy_table("Serial 7s")
+  }, striped = TRUE, hover = TRUE, bordered = TRUE, spacing = "s")
 
   # --- Retention Plot ---
   output$retention_plot <- renderPlotly({
