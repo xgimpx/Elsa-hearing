@@ -353,37 +353,41 @@ message("\n========== Processing Depression (CES-D) ==========\n")
 
 # CES-D 8-item scale measures depressive symptoms
 # Items are: depressed, effort, sleep, happy (R), lonely, enjoyed (R), sad, going
-# Response options: 1=Rarely (<1 day), 2=Some (1-2 days), 3=Occasionally (3-4 days), 4=Most (5-7 days)
-# Two items are REVERSE coded: happy and enjoyed life
+# ELSA coding: 1 = Yes (had symptom), 2 = No (did not have symptom)
+# Negative values = missing (-1, -8, -9)
+# Two items are REVERSE coded: happy and enjoyed life (1=Yes is GOOD, so scores 0)
 
 wave7_depression <- elsa_clean$wave7 %>%
   select(idauniq, any_of(c("psceda", "pscedb", "pscedc", "pscedd",
                            "pscede", "pscedf", "pscedg", "pscedh"))) %>%
   mutate(
-    # Recode to 0-3 scale (standard CES-D scoring)
-    # Original: 1-4, recode to 0-3
-    cesd_depressed = psceda - 1,
-    cesd_effort = pscedb - 1,
-    cesd_sleep = pscedc - 1,
-    cesd_happy = 3 - (pscedd - 1),      # REVERSE: high = less happy = more depressed
-    cesd_lonely = pscede - 1,
-    cesd_enjoyed = 3 - (pscedf - 1),    # REVERSE: high = less enjoyed = more depressed
-    cesd_sad = pscedg - 1,
-    cesd_going = pscedh - 1,
+    # For regular items: 1=Yes (symptom) -> 1, 2=No -> 0
+    # Formula: 2 - value (but only for valid values 1 or 2)
+    cesd_depressed = ifelse(psceda %in% c(1,2), 2 - psceda, NA),
+    cesd_effort = ifelse(pscedb %in% c(1,2), 2 - pscedb, NA),
+    cesd_sleep = ifelse(pscedc %in% c(1,2), 2 - pscedc, NA),
+    cesd_lonely = ifelse(pscede %in% c(1,2), 2 - pscede, NA),
+    cesd_sad = ifelse(pscedg %in% c(1,2), 2 - pscedg, NA),
+    cesd_going = ifelse(pscedh %in% c(1,2), 2 - pscedh, NA),
 
-    # Total CES-D score (0-24 range)
+    # For REVERSE items (happy, enjoyed): 1=Yes (good) -> 0, 2=No (bad) -> 1
+    # Formula: value - 1
+    cesd_happy = ifelse(pscedd %in% c(1,2), pscedd - 1, NA),
+    cesd_enjoyed = ifelse(pscedf %in% c(1,2), pscedf - 1, NA),
+
+    # Total CES-D score (0-8 range for binary items)
     # Higher scores = more depressive symptoms
     cesd_total = cesd_depressed + cesd_effort + cesd_sleep + cesd_happy +
                  cesd_lonely + cesd_enjoyed + cesd_sad + cesd_going,
 
-    # Binary depression indicator (score >= 4 is common cutoff for 8-item CES-D)
-    depression_binary = ifelse(cesd_total >= 4, 1, 0),
+    # Binary depression indicator (score >= 3 is common cutoff for binary 8-item CES-D)
+    depression_binary = ifelse(cesd_total >= 3, 1, 0),
 
     # Categorical depression
     depression_cat = case_when(
-      cesd_total < 4 ~ "None/minimal",
-      cesd_total < 8 ~ "Mild",
-      cesd_total >= 8 ~ "Moderate/severe",
+      cesd_total < 3 ~ "None/minimal",
+      cesd_total < 5 ~ "Mild",
+      cesd_total >= 5 ~ "Moderate/severe",
       TRUE ~ NA_character_
     ) %>% factor(levels = c("None/minimal", "Mild", "Moderate/severe"))
   ) %>%
